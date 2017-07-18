@@ -14,6 +14,14 @@ public class Projectile {
 	int isMoving = 0;
 	boolean stopped = false;
 	Image image;
+	boolean peaOutOfRange = false;
+	boolean shoot = false;
+	public Boolean getShoot(){
+		return this.shoot;
+	}
+	public void setShoot(boolean s){
+		this.shoot = s;
+	}
 	public void setMoving(int m){
 		this.isMoving = m;
 	}

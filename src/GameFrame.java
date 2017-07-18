@@ -186,8 +186,10 @@ public class GameFrame extends JPanel{
 	TileChest2 chest2 = new TileChest2();
 	TileHarpSeal seal = new TileHarpSeal();
 	ItemBanana banana = new ItemBanana();
+	S17Shooter shooter17 = new S17Shooter(3, 8, 9, 17);
 	PeaShooter peaShooter2 = new PeaShooter(2, 5, 5, 2);
 	PeaShooter peaShooter = new PeaShooter(3, 10, 10, 1);
+	Seventeen seventeen = new Seventeen(17);
 	Fireball fireball = new Fireball(3);
 	FireShooter fireShooter = new FireShooter(2, 15, 7, 3);
 	Pea pea = new Pea(1);
@@ -201,6 +203,8 @@ public class GameFrame extends JPanel{
 		projectiles.add(fireball);
 		projectiles.add(pea);
 		projectiles.add(pea2);
+		projectiles.add(seventeen);
+		shooters.add(shooter17);
 		shooters.add(fireShooter);
 		shooters.add(peaShooter);
 		shooters.add(peaShooter2);
@@ -280,7 +284,6 @@ public class GameFrame extends JPanel{
 			for(Shooter shooter: shooters){
 				for(Projectile projectile: projectiles){
 					if(shooter.getID() == projectile.getID()){
-							System.out.println(projectile.getMotion());
 							if(projectile.getMotion() == true){
 								g.drawImage(projectile.getImage(), projectile.getX(), projectile.getY(), null);
 							}
@@ -508,23 +511,29 @@ public class GameFrame extends JPanel{
 			for(Shooter shooter: shooters){
 				for(Projectile projectile: projectiles){
 					if(shooter.getID() == projectile.getID()){
-						if(shooter.shoot(realPos1, realPos2) == 1 || projectile.getMoving() != 0){
-							going = true;
 							if(projectile.getDistance() >= projectile.getRange() * 32){
+								going = false;
 								projectile.resetPea();
 								shooter.resetWait();
-								System.out.println(shooter.getPassiveWait());
+								System.out.println("SSSSSSSSSSSSTTTTTTTTTTTTTTOTOOOOOOOOOOOOPPPPPPPPPP!!!!!!!!!!!!");
 								projectile.setOrigin(shooter.getX() * 32, shooter.getY() * 32);
 								quit = true;
+								projectile.setShoot(false);
 								peaOutOfRange = true;
 								firstTime = true;
 								projectile.setMotion(false);
 							}
+							if(shooter.getPassiveWait() >= shooter.getwaitTime() && shooter.shoot(realPos1, realPos2) == 1){
+								System.out.println("gyqrgyregugyerguy");
+								projectile.setMotion(true);
+								projectile.setShoot(true);
+								quit = false;
+								going = true;
+							}
+							System.out.println(shooter.getPassiveWait());
 							if(quit == false){
-								if(!projectile.getMotion() && shooter.getPassiveWait() >= shooter.getwaitTime() && shooter.shoot(realPos1, realPos2) == 1){
-									projectile.setMotion(true);
-								}
-								if(shooter.getPassiveWait() >= shooter.getwaitTime()){
+								System.out.println(projectile.getShoot());
+								if(projectile.getShoot() == true && projectile.getShoot() && shooter.getPassiveWait() >= shooter.getwaitTime()){
 									switch(shooter.getOrientation()){
 										case 1:
 											if(projectile.getMoving() == 1){
@@ -571,14 +580,14 @@ public class GameFrame extends JPanel{
 											}
 											break;
 									}
-								} else {
-									shooter.setPassiveWait(1);
+								} else{
+									if(shooter.getPassiveWait() < shooter.getwaitTime() && shooter.shoot(realPos1, realPos2) == 1){
+										shooter.setPassiveWait(1);
+									}
 									projectile.setMotion(false);
 								}
 							} else {
-								if(shooter.shoot(realPos1, realPos2) == 1){
-									projectile.setMotion(true);
-								}
+								
 								quit = false; 
 							}
 								repaint();
@@ -586,7 +595,6 @@ public class GameFrame extends JPanel{
 								for(int i = -31; i < 32; i ++){
 									if(pos1 * 32 == projectile1.getX() - i && pos2 * 32 == projectile1.getY()){
 										projectile1.resetPea();
-										ProjectileTimer.stop();
 										projectile1.setMotion(false);
 										shooter.resetWait();
 										//projectile1.setX(projectile1.originX, 1);
@@ -602,7 +610,6 @@ public class GameFrame extends JPanel{
 									}
 								}
 							}
-						}
 					}
 				}
 			}
