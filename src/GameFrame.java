@@ -294,7 +294,9 @@ public class GameFrame extends JPanel{
 				}
 			}
 			for(Shooter shooter1 : shooters){
-				g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
+				if(!shooter1.getDead()) {
+					g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
+				}
 			}
 			for(Shooter shooter: shooters){
 				for(Projectile projectile: projectiles){
@@ -550,12 +552,11 @@ public class GameFrame extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			for(Shooter shooter: shooters){
 				for(Projectile projectile: projectiles){
-					if(shooter.getID() == projectile.getID()){
+					if(shooter.getID() == projectile.getID() && !shooter.getDead()){
 							if(projectile.getDistance() >= projectile.getRange() * 32){
 								going = false;
 								projectile.resetPea();
 								shooter.resetWait();
-								System.out.println("SSSSSSSSSSSSTTTTTTTTTTTTTTOTOOOOOOOOOOOOPPPPPPPPPP!!!!!!!!!!!!");
 								projectile.setOrigin(shooter.getX() * 32, shooter.getY() * 32);
 								quit = true;
 								projectile.setShoot(false);
@@ -564,7 +565,6 @@ public class GameFrame extends JPanel{
 								projectile.setMotion(false);
 							}
 							if(shooter.getPassiveWait() >= shooter.getwaitTime() && shooter.shoot(realPos1, realPos2) == 1){
-								System.out.println("gyqrgyregugyerguy");
 								projectile.setMotion(true);
 								projectile.setShoot(true);
 								quit = false;
@@ -572,7 +572,6 @@ public class GameFrame extends JPanel{
 							}
 							System.out.println(shooter.getPassiveWait());
 							if(quit == false){
-								System.out.println(projectile.getShoot());
 								if(projectile.getShoot() == true && projectile.getShoot() && shooter.getPassiveWait() >= shooter.getwaitTime()){
 									switch(shooter.getOrientation()){
 										case 1:
@@ -634,22 +633,30 @@ public class GameFrame extends JPanel{
 							for(Projectile projectile1: projectiles){
 								for(int i = -31; i < 32; i ++){
 									if(pos1 * 32 == projectile1.getX() - i && pos2 * 32 == projectile1.getY()){
-										projectile1.resetPea();
-										projectile1.setMotion(false);
-										shooter.resetWait();
-										//projectile1.setX(projectile1.originX, 1);
-										//projectile1.setY(projectile1.originY, 1);
-										player1.DoDamage(projectile1.getDamage());
+										for(Shooter shooter1: shooters) {
+											if(projectile1.getMotion()) {
+												projectile1.resetPea();
+												projectile1.setMotion(false);
+												player1.DoDamage(projectile1.getDamage());
+											}
+											shooter1.resetWait();
+										}
 									} else if(pos1 * 32 == projectile1.getX() && pos2 * 32 == projectile1.getY() - i){
-										projectile1.resetPea();
-										projectile1.setMotion(false);
-										shooter.resetWait();
-										projectile1.setX(projectile1.originX, 1);
-										projectile1.setY(projectile1.originY, 1);
-										player1.DoDamage(projectile1.getDamage());
+										for(Shooter shooter1: shooters) {
+											if(projectile1.getMotion()) {
+												projectile1.resetPea();
+												projectile1.setMotion(false);
+												shooter1.resetWait();
+												player1.DoDamage(projectile1.getDamage());
+											}
+											shooter1.resetWait();
+										}
 									}
 								}
 							}
+					} else if(shooter.getDead()) {
+						projectile.resetPea();
+						projectile.setMotion(false);
 					}
 				}
 			}
@@ -845,7 +852,12 @@ public class GameFrame extends JPanel{
 				System.out.println("Hello");
 				for(Sword sword: swords) {
 					if(inventory[inventorySelect[1]][inventorySelect[0]] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
-						player1.DoDamage(sword.getDamage());
+						for(Shooter shooter: shooters) {
+							if(shooter.getX() == realPos1 + 1 && shooter.getY() == realPos2)
+							shooter.doDamage(sword.getDamage());
+							shooter.updateHP();
+							System.out.println(shooter.getHP());
+						}
 						sword.changeImage(2);
 						System.out.println("YOU STOPPED MY TIMER!!!!");
 						ToolWaitTimer.stop();

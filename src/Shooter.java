@@ -12,7 +12,23 @@ public class Shooter {
 	int range = 0;
 	int waitTime = 0;
 	int passiveWait = 0;
+	int HP = 5;
+	boolean Dead = false;
 	Image image;
+	public void updateHP() {
+		if(HP <= 0) {
+			Dead = true;
+		}
+	}
+	public boolean getDead() {
+		return this.Dead;
+	}
+	public int getHP() {
+		return this.HP;
+	}
+	public void doDamage(int damage) {
+		this.HP -= damage;
+	}
 	public void setPassiveWait(int waitPlus){
 		this.passiveWait += waitPlus;
 	}
