@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +40,7 @@ public class GameFrame extends JPanel{
 	boolean TimerStarted = false;
 	boolean firstTime = true;
 	boolean stop = false;
+	boolean swing = false;
 	int moveMode = 1;
 	int toggleMove = 0;
 	int toggle = 0;
@@ -47,9 +49,11 @@ public class GameFrame extends JPanel{
 	ArrayList<Tile> items;
 	ArrayList<Shooter> shooters;
 	ArrayList<Projectile> projectiles;
+	ArrayList<Sword> swords;
 	Timer damageTimer;
 	Timer AITimer;
 	Timer ProjectileTimer;
+	Timer ToolWaitTimer;
 	Image Yoshi = new ImageIcon("src/Assets/yoshicut.png").getImage();
 	int pastSelect = 0;
 	int[] pastPos = {0,0};
@@ -115,7 +119,7 @@ public class GameFrame extends JPanel{
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0}
+			{101,0,0,0,0,0,0}
 	};
 	int itemLayer[][] = {
 		{0,0,11,11,11,0,10,10,10,10,0,0,0,12,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,10,},
@@ -192,10 +196,12 @@ public class GameFrame extends JPanel{
 	Seventeen seventeen = new Seventeen(17);
 	Fireball fireball = new Fireball(3);
 	FireShooter fireShooter = new FireShooter(2, 15, 7, 3);
+	TestSword sword = new TestSword();
 	Pea pea = new Pea(1);
 	Pea pea2 = new Pea(2);
 	public GameFrame() {
 		super();
+		swords = new ArrayList<Sword>();
 		projectiles = new ArrayList<Projectile>();
 		shooters = new ArrayList<Shooter>();
 		tiles = new ArrayList<Tile>();
@@ -219,12 +225,15 @@ public class GameFrame extends JPanel{
 		tiles.add(mountain);
 		tiles.add(seal);
 		items.add(banana);
+		swords.add(sword);
 		setFocusable(true);	
 		addKeyListener(new YoshiRider());
 		addMouseWheelListener(new mouse());
 		this.AITimer = new Timer(1500, new AITimer());
 		this.damageTimer = new Timer(1000, new DamageTimer());
 		this.ProjectileTimer = new Timer(31, new ProjectileTimer());
+		this.ToolWaitTimer = new Timer(31, new ToolWaitTimer());
+		ToolWaitTimer.start();
 	}
 
 	public void paint(Graphics g){
@@ -278,6 +287,12 @@ public class GameFrame extends JPanel{
 				}
 			}
 			g.drawImage(player1.getImage(), x, y, null);
+			for(Sword sword: swords) {
+				if(sword.getCurrentImage() == sword.image2) {
+					g.drawImage(sword.getCurrentImage(),realPos1 * 32 + 20, realPos2 * 32 + 7, null);
+					break;
+				}
+			}
 			for(Shooter shooter1 : shooters){
 				g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
 			}
@@ -316,6 +331,7 @@ public class GameFrame extends JPanel{
 				g.drawString(hp, 0, 40);
 			}
 			if(drawInventory == true){
+				g.setColor(Color.BLACK);
 				g2D.setComposite(opaque);
 				for(int x = 1; x < 8; x ++){
 					for(int y = 3; y < 8; y ++){
@@ -357,9 +373,15 @@ public class GameFrame extends JPanel{
 								g2D.drawImage(tile.getImage(),(p + 1) * 72,221 + 72 * i, 67, 67, null);
 							}
 						}
+						for(Sword sword: swords) {
+							if(sword.getID() == inventory[i][p]){
+								g2D.drawImage(sword.getImage(1),(p + 1) * 72,221 + 72 * i, 67, 67, null);
+							}
+						}
 					}
 				}
 			} else {
+				g.setColor(Color.BLACK);
 				g2D.setComposite(opaque);
 				for(int x = 1; x < 8; x ++){
 					for(int y = 8; y < 10; y ++){
@@ -415,6 +437,11 @@ public class GameFrame extends JPanel{
 					for(Tile tile: tiles){
 						if(tile.getID() == inventory[i][p]){
 							g2D.drawImage(tile.getImage(),(p + 1) * 72, 72 * i + 345, 67, 67, null);
+						}
+					}
+					for(Sword sword: swords) {
+						if(sword.getID() == inventory[i][p]){
+							g2D.drawImage(sword.getImage(1),(p + 1) * 72, 72 * i + 345, 67, 67, null);
 						}
 					}
 				}
@@ -503,6 +530,19 @@ public class GameFrame extends JPanel{
 		}
 		
 	}
+	public class ToolWaitTimer implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			for(Sword sword: swords) {
+				System.out.println(sword.getWait() + " " + sword.getSpeed());
+				if(sword.getWait() <= sword.getSpeed()) {
+					sword.increaseWait(1);
+				}
+			}
+		}
+		
+	}	
 	public class ProjectileTimer implements ActionListener{
 		boolean quit = false;
 		boolean going = false;
@@ -801,6 +841,16 @@ public class GameFrame extends JPanel{
 				} else {
 					toggleHealthBar = true;
 				}
+			} else if(e.getKeyChar() == ' ') {
+				System.out.println("Hello");
+				for(Sword sword: swords) {
+					if(inventory[inventorySelect[1]][inventorySelect[0]] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
+						player1.DoDamage(sword.getDamage());
+						sword.changeImage(2);
+						System.out.println("YOU STOPPED MY TIMER!!!!");
+						ToolWaitTimer.stop();
+					}
+				}
 			}
 			switch(going){
 			
@@ -882,7 +932,15 @@ public class GameFrame extends JPanel{
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			
+			if(e.getKeyChar() == ' ') {
+				for(Sword sword: swords) {
+					if(inventory[inventorySelect[1]][inventorySelect[0]] == sword.getID() && !drawInventory) {
+						sword.changeImage(1);
+						sword.increaseWait(0 - sword.getWait());
+						ToolWaitTimer.start();
+					}
+				}
+			}
 		}
 		
 	}
