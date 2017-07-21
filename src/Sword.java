@@ -12,6 +12,7 @@ public class Sword {
 	Image currentImage;
 	Image image1;
 	Image image2;
+	Image image3;
 	Image noImage;
 	public void setID(int id) {
 		this.ID = id;
@@ -22,9 +23,10 @@ public class Sword {
 	public Image getCurrentImage() {
 		return this.currentImage;
 	}
-	public void setImages(String s1, String s2){
+	public void setImages(String s1, String s2, String s3){
 		image1 = new ImageIcon(s1).getImage();
 		image2 = new ImageIcon(s2).getImage();
+		image3 = new ImageIcon(s3).getImage();
 	}
 	public Image getImage(int i) {
 		if(i == 1) {
@@ -39,6 +41,8 @@ public class Sword {
 			this.currentImage = image1;
 		} else if(a == 2) {
 			this.currentImage = image2;
+		} else if(a == 3) {
+			this.currentImage = image3;
 		}
 	}
 	public void setDamage(int d) {

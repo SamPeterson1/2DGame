@@ -54,7 +54,9 @@ public class GameFrame extends JPanel{
 	Timer AITimer;
 	Timer ProjectileTimer;
 	Timer ToolWaitTimer;
-	Image Yoshi = new ImageIcon("src/Assets/yoshicut.png").getImage();
+	Image currentImage;
+	Image YoshiRight = new ImageIcon("src/Assets/yoshicut.png").getImage();
+	Image YoshiLeft = new ImageIcon("src/Assets/yoshicutLeft.png").getImage();
 	int pastSelect = 0;
 	int[] pastPos = {0,0};
 	int[] inventorySelect = {0,0};
@@ -266,7 +268,7 @@ public class GameFrame extends JPanel{
 				}
 			}
 			AITimer.start();
-			g.drawImage(this.Yoshi, yoshi.getX() * 32, yoshi.getY() * 32, null);
+			g.drawImage(this.YoshiRight, yoshi.getX() * 32, yoshi.getY() * 32, null);
 			for(int a = offsetY; a < 20 + offsetY; a ++){
 				for(int i = offsetX; i < 20 + offsetX; i ++){
 					for(Tile tile: tiles){
@@ -286,10 +288,16 @@ public class GameFrame extends JPanel{
 					damageTimer.stop();
 				}
 			}
-			g.drawImage(player1.getImage(), x, y, null);
+			g.drawImage(currentImage, x, y, null);
 			for(Sword sword: swords) {
 				if(sword.getCurrentImage() == sword.image2) {
-					g.drawImage(sword.getCurrentImage(),realPos1 * 32 + 20, realPos2 * 32 + 7, null);
+					if(currentImage == YoshiRight) {
+						sword.changeImage(2);
+						g.drawImage(sword.getCurrentImage(),x + 20,y + 7, null);
+					} else if(currentImage == YoshiLeft) {
+						sword.changeImage(3);
+						g.drawImage(sword.getCurrentImage(),x - 20,y + 7, null);
+					}
 					break;
 				}
 			}
@@ -705,6 +713,7 @@ public class GameFrame extends JPanel{
 			}
 			else if(e.getKeyChar() == 'a'){
 				if(drawInventory == false){
+					currentImage = YoshiLeft;
 						for(Tile tile: tiles) {
 							if(realPos1 != 0){
 							if(tile.getID() == map[realPos2][realPos1 - 1] && tile.getPassable()) {
@@ -770,6 +779,7 @@ public class GameFrame extends JPanel{
 			else if(e.getKeyChar() == 'd'){
 				if(drawInventory == false){
 					if(realPos1 != 54){
+						currentImage = YoshiRight;
 						for(Tile tile: tiles) {
 							if(tile.getID() != 10 && tile.getID() != 11){
 								if(tile.getID() == map[realPos2][realPos1 + 1] && tile.getPassable()) {
@@ -834,11 +844,18 @@ public class GameFrame extends JPanel{
 					moveMode = 1;
 				}
 			} else if(e.getKeyChar() == 'u'){
-				if(inventory[inventorySelect[1]][inventorySelect[0]] > 0){
+				if(inventory[inventorySelect[1]][inventorySelect[0]] > 0 && drawInventory){
 					for(Tile item: items){
 						if(item.getID() == inventory[inventorySelect[1]][inventorySelect[0]]){
 							item.doItemAction(player1);
 							inventory[inventorySelect[1]][inventorySelect[0]] = 0;
+						}
+					}
+				} else if(inventory[3][inventorySlot - 1] > 0 && !drawInventory) {
+					for(Tile item: items){
+						if(item.getID() == inventory[3][inventorySlot - 1]){
+							item.doItemAction(player1);
+							inventory[3][inventorySlot - 1] = 0;
 						}
 					}
 				}
@@ -849,17 +866,16 @@ public class GameFrame extends JPanel{
 					toggleHealthBar = true;
 				}
 			} else if(e.getKeyChar() == ' ') {
-				System.out.println("Hello");
 				for(Sword sword: swords) {
-					if(inventory[inventorySelect[1]][inventorySelect[0]] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
+					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
 						for(Shooter shooter: shooters) {
-							if(shooter.getX() == realPos1 + 1 && shooter.getY() == realPos2)
-							shooter.doDamage(sword.getDamage());
-							shooter.updateHP();
-							System.out.println(shooter.getHP());
+							if(shooter.getX() == realPos1 + 1 && shooter.getY() == realPos2 && currentImage == YoshiRight || shooter.getX() == realPos1 - 1 && shooter.getY() == realPos2 && currentImage == YoshiLeft) {
+								shooter.doDamage(sword.getDamage());
+								shooter.updateHP();
+								System.out.println(shooter.getHP());
+							}
 						}
 						sword.changeImage(2);
-						System.out.println("YOU STOPPED MY TIMER!!!!");
 						ToolWaitTimer.stop();
 					}
 				}
@@ -946,7 +962,7 @@ public class GameFrame extends JPanel{
 		public void keyReleased(KeyEvent e) {
 			if(e.getKeyChar() == ' ') {
 				for(Sword sword: swords) {
-					if(inventory[inventorySelect[1]][inventorySelect[0]] == sword.getID() && !drawInventory) {
+					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory) {
 						sword.changeImage(1);
 						sword.increaseWait(0 - sword.getWait());
 						ToolWaitTimer.start();
