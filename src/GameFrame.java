@@ -54,9 +54,11 @@ public class GameFrame extends JPanel{
 	Timer AITimer;
 	Timer ProjectileTimer;
 	Timer ToolWaitTimer;
-	Image currentImage;
 	Image YoshiRight = new ImageIcon("src/Assets/yoshicut.png").getImage();
 	Image YoshiLeft = new ImageIcon("src/Assets/yoshicutLeft.png").getImage();
+	Image YoshiUp = new ImageIcon("src/Assets/yoshicutUp.png").getImage();
+	Image YoshiDown = new ImageIcon("src/Assets/yoshicutDown.png").getImage();
+	Image currentImage = YoshiRight;
 	int pastSelect = 0;
 	int[] pastPos = {0,0};
 	int[] inventorySelect = {0,0};
@@ -267,8 +269,12 @@ public class GameFrame extends JPanel{
 					}
 				}
 			}
-			AITimer.start();
-			g.drawImage(this.YoshiRight, yoshi.getX() * 32, yoshi.getY() * 32, null);
+			if(!yoshi.checkDead()) {
+				AITimer.start();
+				g.drawImage(yoshi.getCurrentImage(), yoshi.getX() * 32, yoshi.getY() * 32, null);
+			} else {
+				AITimer.stop();
+			}
 			for(int a = offsetY; a < 20 + offsetY; a ++){
 				for(int i = offsetX; i < 20 + offsetX; i ++){
 					for(Tile tile: tiles){
@@ -289,18 +295,6 @@ public class GameFrame extends JPanel{
 				}
 			}
 			g.drawImage(currentImage, x, y, null);
-			for(Sword sword: swords) {
-				if(sword.getCurrentImage() == sword.image2) {
-					if(currentImage == YoshiRight) {
-						sword.changeImage(2);
-						g.drawImage(sword.getCurrentImage(),x + 20,y + 7, null);
-					} else if(currentImage == YoshiLeft) {
-						sword.changeImage(3);
-						g.drawImage(sword.getCurrentImage(),x - 20,y + 7, null);
-					}
-					break;
-				}
-			}
 			for(Shooter shooter1 : shooters){
 				if(!shooter1.getDead()) {
 					g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
@@ -455,6 +449,24 @@ public class GameFrame extends JPanel{
 						}
 					}
 				}
+				for(Sword sword: swords) {
+					if(sword.getCurrentImage() == sword.image2) {
+						if(currentImage == YoshiRight) {
+							sword.changeImage(2);
+							g.drawImage(sword.getCurrentImage(),x + 20,y + 7, null);
+						} else if(currentImage == YoshiLeft) {
+							sword.changeImage(3);
+							g.drawImage(sword.getCurrentImage(),x - 20,y + 7, null);
+						} else if(currentImage == YoshiUp) {
+							sword.changeImage(4);
+							g.drawImage(sword.getCurrentImage(),x - 7,y - 20, null);
+						} else if(currentImage == YoshiDown) {
+							sword.changeImage(5);
+							g.drawImage(sword.getCurrentImage(),x - 7,y + 20, null);
+						}
+						break;
+					}
+				}
 				Font large = new Font("Helvetica", Font.BOLD, 100);
 				if(player1.getHP() <= 0){
 					stop = true;
@@ -535,7 +547,7 @@ public class GameFrame extends JPanel{
 	public class AITimer implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			yoshi.AI(realPos1, realPos2, tiles, map);
+			yoshi.AI(realPos1, realPos2, tiles, map, player1);
 			repaint();
 		}
 		
@@ -662,7 +674,7 @@ public class GameFrame extends JPanel{
 									}
 								}
 							}
-					} else if(shooter.getDead()) {
+					} else if(shooter.getDead() && shooter.getID() == projectile.getID()) {
 						projectile.resetPea();
 						projectile.setMotion(false);
 					}
@@ -681,6 +693,7 @@ public class GameFrame extends JPanel{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyChar() == 'w'){
 				if(drawInventory == false){
+					currentImage = YoshiUp;
 					for(Tile tile: tiles) {
 						if(realPos2 != 0){
 							if(tile.getID() == map[realPos2 - 1][realPos1] && tile.getPassable()) {
@@ -746,6 +759,7 @@ public class GameFrame extends JPanel{
 			}
 			else if(e.getKeyChar() == 's'){
 				if(drawInventory == false){
+					currentImage = YoshiDown;
 					if(realPos2 != 54){
 						for(Tile tile: tiles) {
 							if(tile.getID() == map[realPos2 + 1][realPos1] && tile.getPassable()) {
@@ -778,8 +792,8 @@ public class GameFrame extends JPanel{
 			}
 			else if(e.getKeyChar() == 'd'){
 				if(drawInventory == false){
+					currentImage = YoshiRight;
 					if(realPos1 != 54){
-						currentImage = YoshiRight;
 						for(Tile tile: tiles) {
 							if(tile.getID() != 10 && tile.getID() != 11){
 								if(tile.getID() == map[realPos2][realPos1 + 1] && tile.getPassable()) {
@@ -808,7 +822,20 @@ public class GameFrame extends JPanel{
 						inventorySelect[0] ++;
 					}
 				}
-			} else if(e.getKeyChar() == 'i'){
+			} else if(e.getKeyChar() == 'i') {
+				currentImage = YoshiUp;
+				going = 1;
+			} else if(e.getKeyChar() == 'j') {
+				currentImage = YoshiLeft;
+				going = 2;
+			} else if(e.getKeyChar() == 'k') {
+				currentImage = YoshiDown;
+				going = 3;
+			} else if(e.getKeyChar() == 'l') {
+				currentImage = YoshiRight;
+				going = 4;
+			}
+			else if(e.getKeyChar() == 'v'){
 				if(toggle == 0){
 					toggle = 1;
 					drawInventory = true;
@@ -869,11 +896,48 @@ public class GameFrame extends JPanel{
 				for(Sword sword: swords) {
 					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
 						for(Shooter shooter: shooters) {
-							if(shooter.getX() == realPos1 + 1 && shooter.getY() == realPos2 && currentImage == YoshiRight || shooter.getX() == realPos1 - 1 && shooter.getY() == realPos2 && currentImage == YoshiLeft) {
+							if(shooter.getX() == pos1 + 1 && shooter.getY() == pos2 && currentImage == YoshiRight) {
 								shooter.doDamage(sword.getDamage());
 								shooter.updateHP();
 								System.out.println(shooter.getHP());
+								break;
+							} else if(shooter.getX() == pos1 - 1 && shooter.getY() == pos2 && currentImage == YoshiLeft) {
+								shooter.doDamage(sword.getDamage());
+								shooter.updateHP();
+								System.out.println(shooter.getHP());
+								break;
+							} else if(shooter.getX() == pos1 && shooter.getY() == pos2 - 1 && currentImage == YoshiUp) {
+								shooter.doDamage(sword.getDamage());
+								shooter.updateHP();
+								System.out.println(shooter.getHP());
+								break;
+							}else if(shooter.getX() == pos1 && shooter.getY() == pos2 + 1 && currentImage == YoshiDown) {
+								shooter.doDamage(sword.getDamage());
+								shooter.updateHP();
+								System.out.println(shooter.getHP());
+								break;
 							}
+						}
+						if(yoshi.getX() == pos1 + 1 && yoshi.getY() == pos2 && currentImage == YoshiRight) {
+							yoshi.doDamage(sword.getDamage());
+							System.out.println(yoshi.getHP());
+							sword.changeImage(2);
+							break;
+						} else if(yoshi.getX() == pos1 - 1 && yoshi.getY() == pos2 && currentImage == YoshiLeft) {
+							yoshi.doDamage(sword.getDamage());
+							System.out.println(yoshi.getHP());
+							sword.changeImage(2);
+							break;
+						} else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 - 1 && currentImage == YoshiUp) {
+							yoshi.doDamage(sword.getDamage());
+							System.out.println(yoshi.getHP());
+							sword.changeImage(2);
+							break;
+						}else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 + 1 && currentImage == YoshiDown) {
+							yoshi.doDamage(sword.getDamage());
+							System.out.println(yoshi.getHP());
+							sword.changeImage(2);
+							break;
 						}
 						sword.changeImage(2);
 						ToolWaitTimer.stop();
@@ -888,6 +952,7 @@ public class GameFrame extends JPanel{
 						y += 32;
 						offsetY --;
 						pos2 ++;
+						yoshi.AILoc2 ++;
 						for(Shooter shooter: shooters){
 							shooter.decreaseY(1, 2);
 						}
@@ -906,6 +971,7 @@ public class GameFrame extends JPanel{
 						x += 32;
 						offsetX --;
 						pos1 ++;
+						yoshi.AILoc1 ++;
 						for(Shooter shooter: shooters){
 							shooter.decreaseX(1, 2);
 						}
@@ -923,6 +989,7 @@ public class GameFrame extends JPanel{
 					if(offsetY - 1 < offsetboundaryY - 1){
 						y -= 32;
 						offsetY ++;
+						yoshi.AILoc2 --;
 						pos2 --;
 						for(Shooter shooter: shooters){
 							shooter.decreaseY(1, 1);
@@ -942,6 +1009,7 @@ public class GameFrame extends JPanel{
 						x -= 32;
 						offsetX ++;
 						pos1 --;
+						yoshi.AILoc1 --;
 						for(Shooter shooter: shooters){
 							shooter.decreaseX(1, 1);
 						}
@@ -961,16 +1029,16 @@ public class GameFrame extends JPanel{
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if(e.getKeyChar() == ' ') {
+				System.out.println("WITHDRAW!!!!");
+				sword.changeImage(1);
 				for(Sword sword: swords) {
 					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory) {
-						sword.changeImage(1);
 						sword.increaseWait(0 - sword.getWait());
 						ToolWaitTimer.start();
 					}
 				}
 			}
-		}
-		
+			repaint();
+		}		
 	}
-
 }
