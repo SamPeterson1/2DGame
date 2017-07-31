@@ -930,6 +930,7 @@ public class GameFrame extends JPanel{
 						System.out.println("FOOgruhgrugrhugruh");
 						if(chest.open(hasKey) == 1) {
 							inventory[a][b] = 0;
+							
 						}
 					}
 				}
