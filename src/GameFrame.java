@@ -45,11 +45,14 @@ public class GameFrame extends JPanel{
 	int toggleMove = 0;
 	int toggle = 0;
 	int moveID = 0;
+	int a;
+	int b;
 	ArrayList<Tile> tiles;
 	ArrayList<Tile> items;
 	ArrayList<Shooter> shooters;
 	ArrayList<Projectile> projectiles;
 	ArrayList<Sword> swords;
+	ArrayList<Chest> chests;
 	Timer damageTimer;
 	Timer AITimer;
 	Timer ProjectileTimer;
@@ -123,11 +126,11 @@ public class GameFrame extends JPanel{
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
-			{101,0,0,0,0,0,0}
+			{0,12,0,0,0,0,0}
 	};
 	int itemLayer[][] = {
-		{0,0,11,11,11,0,10,10,10,10,0,0,0,12,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,10,},
-		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{0,0,201,201,201,0,112,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,10,},
+		{201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
@@ -200,11 +203,14 @@ public class GameFrame extends JPanel{
 	Seventeen seventeen = new Seventeen(17);
 	Fireball fireball = new Fireball(3);
 	FireShooter fireShooter = new FireShooter(2, 15, 7, 3);
+	ItemKey key = new ItemKey();
 	TestSword sword = new TestSword();
+	TestChest chest = new TestChest();
 	Pea pea = new Pea(1);
 	Pea pea2 = new Pea(2);
 	public GameFrame() {
 		super();
+		chests = new ArrayList<Chest>();
 		swords = new ArrayList<Sword>();
 		projectiles = new ArrayList<Projectile>();
 		shooters = new ArrayList<Shooter>();
@@ -219,6 +225,7 @@ public class GameFrame extends JPanel{
 		shooters.add(peaShooter);
 		shooters.add(peaShooter2);
 		tiles.add(banana);
+		tiles.add(key);
 		tiles.add(chest1);
 		tiles.add(chest2);
 		tiles.add(hotrock);
@@ -230,6 +237,7 @@ public class GameFrame extends JPanel{
 		tiles.add(seal);
 		items.add(banana);
 		swords.add(sword);
+		chests.add(chest);
 		setFocusable(true);	
 		addKeyListener(new YoshiRider());
 		addMouseWheelListener(new mouse());
@@ -265,6 +273,11 @@ public class GameFrame extends JPanel{
 					for(Tile tile: tiles){
 						if(tile.getID() == map[a][i]){
 							g.drawImage(tile.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
+						}
+					}
+					for(Chest chest: chests) {
+						if(chest.getID() == itemLayer[a][i]) {
+							g.drawImage(chest.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
 						}
 					}
 				}
@@ -303,12 +316,11 @@ public class GameFrame extends JPanel{
 			for(Shooter shooter: shooters){
 				for(Projectile projectile: projectiles){
 					if(shooter.getID() == projectile.getID()){
-							if(projectile.getMotion() == true){
-								g.drawImage(projectile.getImage(), projectile.getX(), projectile.getY(), null);
-							}
+						if(projectile.getMotion() == true){
+							g.drawImage(projectile.getImage(), projectile.getX(), projectile.getY(), null);
+						}
 						if(shooter.shoot(realPos1, realPos2) == 1){
 							ProjectileTimer.start();
-							break;
 						}
 					}
 				}
@@ -480,8 +492,14 @@ public class GameFrame extends JPanel{
 			g.setColor(Color.WHITE);
 			g.drawString("GAME OVER",15,300);
 		}
+			for(int i = 0; i < 4; i ++) {
+				for(int q = 0; q < 7; q ++) {
+					if(inventory[i][q] == sword.getID()) {
+						System.out.println("You Have the Sword!!");
+					}
+				}
+			}
 	}
-	
 	/*public class MouseEvent implements MouseListener{
 
 		@Override
@@ -557,7 +575,6 @@ public class GameFrame extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			for(Sword sword: swords) {
-				System.out.println(sword.getWait() + " " + sword.getSpeed());
 				if(sword.getWait() <= sword.getSpeed()) {
 					sword.increaseWait(1);
 				}
@@ -590,7 +607,6 @@ public class GameFrame extends JPanel{
 								quit = false;
 								going = true;
 							}
-							System.out.println(shooter.getPassiveWait());
 							if(quit == false){
 								if(projectile.getShoot() == true && projectile.getShoot() && shooter.getPassiveWait() >= shooter.getwaitTime()){
 									switch(shooter.getOrientation()){
@@ -654,22 +670,24 @@ public class GameFrame extends JPanel{
 								for(int i = -31; i < 32; i ++){
 									if(pos1 * 32 == projectile1.getX() - i && pos2 * 32 == projectile1.getY()){
 										for(Shooter shooter1: shooters) {
-											if(projectile1.getMotion()) {
+											if(projectile1.getMotion() && projectile1.getID() == shooter1.getID()) {
 												projectile1.resetPea();
 												projectile1.setMotion(false);
 												player1.DoDamage(projectile1.getDamage());
+												shooter1.resetWait();
+												break;
 											}
-											shooter1.resetWait();
 										}
 									} else if(pos1 * 32 == projectile1.getX() && pos2 * 32 == projectile1.getY() - i){
 										for(Shooter shooter1: shooters) {
-											if(projectile1.getMotion()) {
+											if(projectile1.getMotion() && projectile1.getID() == shooter1.getID()) {
 												projectile1.resetPea();
 												projectile1.setMotion(false);
 												shooter1.resetWait();
 												player1.DoDamage(projectile1.getDamage());
+												shooter1.resetWait();
+												break;
 											}
-											shooter1.resetWait();
 										}
 									}
 								}
@@ -892,6 +910,29 @@ public class GameFrame extends JPanel{
 				} else {
 					toggleHealthBar = true;
 				}
+			} else if(e.getKeyChar() == 'o') {
+				boolean hasKey = false;
+				boolean ba = false;
+				for(Chest chest: chests) {
+					if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
+						for(a = 0; a < 4; a ++) {
+							for(b = 0; b < 7; b ++) {
+								if(inventory[a][b] - 100 == chest.getID()) {
+									hasKey = true;
+									ba = true;
+									break;
+								}
+							}
+							if(ba) {
+								break;
+							}
+						}
+						System.out.println("FOOgruhgrugrhugruh");
+						if(chest.open(hasKey) == 1) {
+							inventory[a][b] = 0;
+						}
+					}
+				}
 			} else if(e.getKeyChar() == ' ') {
 				for(Sword sword: swords) {
 					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
@@ -899,43 +940,35 @@ public class GameFrame extends JPanel{
 							if(shooter.getX() == pos1 + 1 && shooter.getY() == pos2 && currentImage == YoshiRight) {
 								shooter.doDamage(sword.getDamage());
 								shooter.updateHP();
-								System.out.println(shooter.getHP());
 								break;
 							} else if(shooter.getX() == pos1 - 1 && shooter.getY() == pos2 && currentImage == YoshiLeft) {
 								shooter.doDamage(sword.getDamage());
 								shooter.updateHP();
-								System.out.println(shooter.getHP());
 								break;
 							} else if(shooter.getX() == pos1 && shooter.getY() == pos2 - 1 && currentImage == YoshiUp) {
 								shooter.doDamage(sword.getDamage());
 								shooter.updateHP();
-								System.out.println(shooter.getHP());
 								break;
 							}else if(shooter.getX() == pos1 && shooter.getY() == pos2 + 1 && currentImage == YoshiDown) {
 								shooter.doDamage(sword.getDamage());
 								shooter.updateHP();
-								System.out.println(shooter.getHP());
 								break;
 							}
 						}
 						if(yoshi.getX() == pos1 + 1 && yoshi.getY() == pos2 && currentImage == YoshiRight) {
 							yoshi.doDamage(sword.getDamage());
-							System.out.println(yoshi.getHP());
 							sword.changeImage(2);
 							break;
 						} else if(yoshi.getX() == pos1 - 1 && yoshi.getY() == pos2 && currentImage == YoshiLeft) {
 							yoshi.doDamage(sword.getDamage());
-							System.out.println(yoshi.getHP());
 							sword.changeImage(2);
 							break;
 						} else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 - 1 && currentImage == YoshiUp) {
 							yoshi.doDamage(sword.getDamage());
-							System.out.println(yoshi.getHP());
 							sword.changeImage(2);
 							break;
 						}else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 + 1 && currentImage == YoshiDown) {
 							yoshi.doDamage(sword.getDamage());
-							System.out.println(yoshi.getHP());
 							sword.changeImage(2);
 							break;
 						}
@@ -1029,7 +1062,6 @@ public class GameFrame extends JPanel{
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if(e.getKeyChar() == ' ') {
-				System.out.println("WITHDRAW!!!!");
 				sword.changeImage(1);
 				for(Sword sword: swords) {
 					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory) {
