@@ -3,7 +3,6 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-
 public class Enemy {
 	int Damage = 0;
 	Image up;
