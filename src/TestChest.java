@@ -1,7 +1,6 @@
 
 public class TestChest extends Chest{
-	int[][] contents = {{3,0,4,0,150,0,0,0,0}, {3,0,0,0,0,0,4,0,0}, {3,4,0,0,0,0,0,0,0}};
-	public TestChest(int id) {
+	public TestChest(int id, int[][] contents) {
 		super.setID(id);
 		super.setContents(contents);
 		super.setKeyRequirement(true);
