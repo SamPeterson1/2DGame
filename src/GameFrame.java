@@ -53,6 +53,7 @@ public class GameFrame extends JPanel{
 	ArrayList<Projectile> projectiles;
 	ArrayList<Sword> swords;
 	ArrayList<Chest> chests;
+	ArrayList<Key> keys;
 	Timer damageTimer;
 	Timer AITimer;
 	Timer ProjectileTimer;
@@ -64,6 +65,7 @@ public class GameFrame extends JPanel{
 	Image currentImage = YoshiRight;
 	int pastSelect = 0;
 	int[] pastPos = {0,0};
+	int[] chestSelect = {0,0};
 	int[] inventorySelect = {0,0};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
@@ -129,15 +131,15 @@ public class GameFrame extends JPanel{
 			{0,0,0,0,0,0,0}
 	};
 	int itemLayer[][] = {
-		{0,0,201,201,201,0,112,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,10,},
-		{201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{0,0,201,201,201,0,150,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,113,},
+		{201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{13,13,13,13,13,13,13,13,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
-		{0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{0,0,0,0,0,0,0,0,0,112,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
@@ -205,7 +207,8 @@ public class GameFrame extends JPanel{
 	FireShooter fireShooter = new FireShooter(2, 15, 7, 3);
 	ItemKey key = new ItemKey();
 	TestSword sword = new TestSword();
-	TestChest chest = new TestChest();
+	TestChest chesT = new TestChest(112);
+	TestChest chest = new TestChest(113);
 	Pea pea = new Pea(1);
 	Pea pea2 = new Pea(2);
 	public GameFrame() {
@@ -216,6 +219,7 @@ public class GameFrame extends JPanel{
 		shooters = new ArrayList<Shooter>();
 		tiles = new ArrayList<Tile>();
 		items = new ArrayList<Tile>();
+		keys = new ArrayList<Key>();
 		projectiles.add(fireball);
 		projectiles.add(pea);
 		projectiles.add(pea2);
@@ -225,7 +229,6 @@ public class GameFrame extends JPanel{
 		shooters.add(peaShooter);
 		shooters.add(peaShooter2);
 		tiles.add(banana);
-		tiles.add(key);
 		tiles.add(chest1);
 		tiles.add(chest2);
 		tiles.add(hotrock);
@@ -238,6 +241,8 @@ public class GameFrame extends JPanel{
 		items.add(banana);
 		swords.add(sword);
 		chests.add(chest);
+		chests.add(chesT);
+		keys.add(key);
 		setFocusable(true);	
 		addKeyListener(new YoshiRider());
 		addMouseWheelListener(new mouse());
@@ -357,7 +362,7 @@ public class GameFrame extends JPanel{
 							for(Tile tile: tiles) {
 								g2D.setComposite(opaque);
 								if(tile.getID() == contents[i][j]) {
-									g2D.drawImage(tile.getImage(), j * 77 + 54, i * 77, 72, 72, null);
+									g2D.drawImage(tile.getImage(), j * 77 + 54, i * 77 + 250, 72, 72, null);
 								}
 							}
 						}
@@ -592,7 +597,7 @@ public class GameFrame extends JPanel{
 	public class AITimer implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			yoshi.AI(realPos1, realPos2, tiles, map, player1);
+			//yoshi.AI(realPos1, realPos2, tiles, map, player1);
 			repaint();
 		}
 		
@@ -737,199 +742,253 @@ public class GameFrame extends JPanel{
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyChar() == 'w'){
-				boolean ba = false;
-				if(drawInventory == false){
-					currentImage = YoshiUp;
-					for(Tile tile: tiles) {
-						if(realPos2 != 0){
-							if(tile.getID() == map[realPos2 - 1][realPos1] && tile.getPassable()) {
-								realPos2--;
-								y -= 32;
-								going = 1;
-								pos2 --;
-								break;
-							}
-							if(tile.getID() == itemLayer[realPos2 - 1][realPos1]){
-								if(tile.getID() != 10 && tile.getID() != 11){
-									for(n = n; n > -1; n --) {
+				boolean b = false;
+				for(Chest chest: chests) {
+					if(drawInventory == false && !chest.IsOpen()){
+						currentImage = YoshiUp;
+						for(Tile tile: tiles) {
+							if(realPos2 != 0){
+								if(tile.getID() == map[realPos2 - 1][realPos1] && tile.getPassable()) {
+									realPos2--;
+									y -= 32;
+									going = 1;
+									pos2 --;
+									b = true;
+									break;
+								}
+								if(tile.getID() == itemLayer[realPos2 - 1][realPos1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
 										for(h = h; h > -1; h --) {
+											System.out.println(n + " " + h + " " + inventory[n][h]);
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2 - 1][realPos1] = 0;
-												ba = true;
+												b = true;
 												break;
 											}
-										}
-										if(ba) {
-											break;
+											if(h == 0) {
+												h = 7;
+												n --;
+											}
 										}
 									}
 								}
 							}
-							ba  = false;
+							if(b) {
+								break;
+							}
+						}	
+					} else if(drawInventory){
+						if(inventorySelect[1] > 0){
+							inventorySelect[1] --;
 						}
-					}	
-				} else {
-					if(inventorySelect[1] > 0){
-						inventorySelect[1] --;
+					} else if(chest.IsOpen()) {
+						if(chestSelect[1] > 0) {
+							chestSelect[1] --;
+							System.out.println(chestSelect[1] + " " + chestSelect[0]);
+						}
+					}
+					if(b) {
+						break;
 					}
 				}
 			}
 			else if(e.getKeyChar() == 'a'){
-				boolean ba = false;
-				if(drawInventory == false){
-					currentImage = YoshiLeft;
-						for(Tile tile: tiles) {
-							if(realPos1 != 0){
-							if(tile.getID() == map[realPos2][realPos1 - 1] && tile.getPassable()) {
-								realPos1 --;
-								x -= 32;
-								going = 2;
-								pos1 --;
-								break;
-							} 
-							/*if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
-								if(tile.getID() != 10 && tile.getID() != 11){
-									if(k == 0){
-										i--;
-										k = 7;
-									}
-									if(i > -1){
-										k--;
-										inventory[i][k] = tile.getID();
-										itemLayer[realPos2][realPos1 - 1] = 0;
+				boolean b = false;
+				for(Chest chest: chests) {
+					if(drawInventory == false && !chest.IsOpen()){
+						currentImage = YoshiLeft;
+							for(Tile tile: tiles) {
+								if(realPos1 != 0){
+								if(tile.getID() == map[realPos2][realPos1 - 1] && tile.getPassable()) {
+									realPos1 --;
+									x -= 32;
+									going = 2;
+									pos1 --;
+									b = true;
+									break;
+								} 
+								/*if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
+										if(k == 0){
+											i--;
+											k = 7;
+										}
+										if(i > -1){
+											k--;
+											inventory[i][k] = tile.getID();
+											itemLayer[realPos2][realPos1 - 1] = 0;
+										}
 									}
 								}
-							}
-							*/
-							if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
-								if(tile.getID() != 10 && tile.getID() != 11){
-									for(n = n; n > -1; n --) {
+								*/
+								if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
 										for(h = h; h > -1; h --) {
+											System.out.println(n + " " + h + " " + inventory[n][h]);
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2][realPos1 - 1] = 0;
-												ba = true;
+												b = true;
 												break;
 											}
-										}
-										if(ba) {
-											break;
+											if(h == 0) {
+												h = 7;
+												n --;
+											}
 										}
 									}
 								}
 							}
+							if(b) {
+								break;
+							}
+						}
+					} else if(drawInventory){
+						if(inventorySelect[0] > 0){
+							inventorySelect[0] --;
+						}
+					} else if(chest.IsOpen()){
+						if(chestSelect[0] > 0) {
+							chestSelect[0] --;
+							System.out.println(chestSelect[1] + " " + chestSelect[0]);
 						}
 					}
-				} else {
-					if(inventorySelect[0] > 0){
-						inventorySelect[0] --;
+					if(b) {
+						break;
 					}
 				}
 			}
 			else if(e.getKeyChar() == 's'){
-				boolean ba = false;
-				if(drawInventory == false){
-					currentImage = YoshiDown;
-					if(realPos2 != 54){
-						for(Tile tile: tiles) {
-							if(tile.getID() == map[realPos2 + 1][realPos1] && tile.getPassable()) {
-								realPos2 ++;
-								y += 32;
-								going = 3;
-								pos2 ++;
-								break;
-							}
-							/*
-							if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
-								if(tile.getID() != 10 && tile.getID() != 11){
-									if(k == 0){
-										i--;
-										k = 7;
-									}
-									if(i > -1){
-										k--;
-										inventory[i][k] = tile.getID();
-										itemLayer[realPos2 + 1][realPos1] = 0;
+				boolean b = false;
+				for(Chest chest: chests) {
+					if(drawInventory == false && !chest.IsOpen()){
+						currentImage = YoshiDown;
+						if(realPos2 != 54){
+							for(Tile tile: tiles) {
+								if(tile.getID() == map[realPos2 + 1][realPos1] && tile.getPassable()) {
+									realPos2 ++;
+									y += 32;
+									going = 3;
+									pos2 ++;
+									b = true;
+									break;
+								}
+								/*
+								if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
+										if(k == 0){
+											i--;
+											k = 7;
+										}
+										if(i > -1){
+											k--;
+											inventory[i][k] = tile.getID();
+											itemLayer[realPos2 + 1][realPos1] = 0;
+										}
 									}
 								}
-							}
-							*/
-							if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
-								if(tile.getID() != 10 && tile.getID() != 11){
-									for(n = n; n > -1; n --) {
+								*/
+								if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
 										for(h = h; h > -1; h --) {
+											System.out.println(n + " " + h + " " + inventory[n][h]);
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2 + 1][realPos1] = 0;
-												ba = true;
+												b = true;
 												break;
 											}
-										}
-										if(ba) {
-											break;
+											if(h == 0) {
+												h = 7;
+												n --;
+											}
 										}
 									}
 								}
 							}
+							if(b) {
+								break;
+							}
+						}
+					} else if(drawInventory){
+						if(inventorySelect[1] < 3){
+							inventorySelect[1] ++;
+						}
+					} else if(chest.IsOpen()) {
+						if(chestSelect[1] < 2) {
+							chestSelect[1] ++;
+							System.out.println(chestSelect[1] + " " + chestSelect[0]);
 						}
 					}
-				} else {
-					if(inventorySelect[1] < 3){
-						inventorySelect[1] ++;
+					if(b) {
+						break;
 					}
 				}
 			}
 			else if(e.getKeyChar() == 'd'){
-				boolean ba = false;
-				if(drawInventory == false){
-					currentImage = YoshiRight;
-					if(realPos1 != 54){
-						for(Tile tile: tiles) {
-							if(tile.getID() != 10 && tile.getID() != 11){
-								if(tile.getID() == map[realPos2][realPos1 + 1] && tile.getPassable()) {
-									realPos1 ++;
-									x += 32;
-									going = 4;
-									pos1 ++;
-									break;
-								}
-								/*
-								if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
-									if(k == 0){
-										i--;
-										k = 7;
+				boolean b = false;
+				for(Chest chest: chests) {
+					if(drawInventory == false && !chest.IsOpen()){
+						currentImage = YoshiRight;
+						if(realPos1 != 54){
+							for(Tile tile: tiles) {
+									if(tile.getID() == map[realPos2][realPos1 + 1] && tile.getPassable()) {
+										System.out.println("MOVE");
+										realPos1 ++;
+										x += 32;
+										going = 4;
+										pos1 ++;
+										b = true;
+										break;
 									}
-									if(i > -1){
-										k--;
-										inventory[i][k] = tile.getID();
-										itemLayer[realPos2][realPos1 + 1] = 0;
+									/*
+									if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
+										if(k == 0){
+											i--;
+											k = 7;
+										}
+										if(i > -1){
+											k--;
+											inventory[i][k] = tile.getID();
+											itemLayer[realPos2][realPos1 + 1] = 0;
+										}
 									}
-								}
-								*/
-								if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
-									if(tile.getID() != 10 && tile.getID() != 11){
-										for(n = n; n > -1; n --) {
+									*/
+									if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
+										if(tile.getID() != 10 && tile.getID() != 11){
 											for(h = h; h > -1; h --) {
+												System.out.println(n + " " + h + " " + inventory[n][h]);
 												if(inventory[n][h] == 0) {
 													inventory[n][h] = tile.getID();
 													itemLayer[realPos2][realPos1 + 1] = 0;
-													ba = true;
+													b = true;
 													break;
 												}
-											}
-											if(ba) {
-												break;
+												if(h == 0) {
+													h = 7;
+													n --;
+												}
 											}
 										}
 									}
+								if(b) {
+									break;
 								}
 							}
 						}
+					} else if(drawInventory){
+						if(inventorySelect[0] < 6){
+							inventorySelect[0] ++;
+						}
+					} else if(chest.IsOpen()) {
+						if(chestSelect[0] < 6){
+							chestSelect[0] ++;
+							System.out.println(chestSelect[1] + " " + chestSelect[0]);
+						}
 					}
-				} else {
-					if(inventorySelect[0] < 6){
-						inventorySelect[0] ++;
+					if(b) {
+						break;
 					}
 				}
 			} else if(e.getKeyChar() == 'i') {
@@ -968,7 +1027,6 @@ public class GameFrame extends JPanel{
 			} else if(e.getKeyChar() == '7'){
 				inventorySlot = 7;
 			} else if(e.getKeyChar() == 'm'){
-				boolean ba = false;
 				for(Chest chest: chests) {
 					if(!chest.IsOpen()){
 						if(moveMode == 1){
@@ -985,7 +1043,18 @@ public class GameFrame extends JPanel{
 						}
 					} else {
 						int[][] contents = chest.getContents();
-						
+						for(h = h; h > -1; h --) {
+							System.out.println("IM HERE!!!!");
+							if(inventory[n][h] == 0) {
+								inventory[n][h] = contents[chestSelect[1]][chestSelect[0]];
+								contents[chestSelect[1]][chestSelect[0]] = 0;
+								if(h == 0) {
+									h = 6;
+									n --;
+								}
+								break;
+							}
+						}
 					}
 				}
 			} else if(e.getKeyChar() == 'u'){
@@ -1014,28 +1083,30 @@ public class GameFrame extends JPanel{
 				boolean hasKey = false;
 				boolean ba = false;
 				for(Chest chest: chests) {
-					if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
-						for(a = 0; a < 4; a ++) {
-							if(ba) {
-								break;
-							}
-							for(b = 0; b < 7; b ++) {
-								if(inventory[a][b] - 100 == chest.getID()) {
-									ba = true;
-									hasKey = true;
+					for(Key key: keys) {
+						if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
+							for(a = 0; a < 4; a ++) {
+								if(ba) {
+									break;
 								}
-								if(chest.open(hasKey) == 1) {
-									inventory[a][b] = 0;
-									ba = true;
+								for(b = 0; b < 7; b ++) {
+									if(key.getUnlocks() == chest.getID()) {
+										ba = true;
+										hasKey = true;
+									}
+									if(chest.open(hasKey) == 1) {
+										inventory[a][b] = 0;
+										ba = true;
+										break;
+									}
+								}
+								if(ba) {
 									break;
 								}
 							}
 							if(ba) {
 								break;
 							}
-						}
-						if(ba) {
-							break;
 						}
 					}
 				}

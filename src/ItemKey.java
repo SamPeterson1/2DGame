@@ -1,10 +1,8 @@
 
-public class ItemKey extends Tile {
+public class ItemKey extends Key {
 	public ItemKey() {
 		super();
-		super.setTexture("src/Assets/Key.png");
-		super.setID(112);
-		super.setPassable(false);
-		super.setDamage(0);
+		super.setImage("src/Assets/Key.png");
+		super.setID(150);
 	}
 }
