@@ -1,6 +1,6 @@
 
 public class TestChest extends Chest{
-	int[] contents = {101,0,0,0,0,0,0,0,0};
+	int[][] contents = {{3,0,4,0,112,0,0,0,0}, {3,0,0,0,0,0,4,0,0}, {3,4,0,0,0,0,0,0,0}};
 	public TestChest() {
 		super.setID(12);
 		super.setContents(contents);

@@ -22,8 +22,8 @@ public class GameFrame extends JPanel{
 	int x = 0;
 	int y = 0;
 	int realPos1 = 0;
-	int i = 3;
-	int k = 7;
+	int h = 6;
+	int n = 3;
 	int realPos2 = 0;
 	int pos1 = 0; //x
 	int pos2 = 0; //y
@@ -67,7 +67,7 @@ public class GameFrame extends JPanel{
 	int[] inventorySelect = {0,0};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
-		{1,1,1,2,1,5,5,5,5,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
+		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
 		{1,1,4,4,4,4,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1,1,4,4,4,4,1,1,1,1,1},
 		{1,1,4,3,3,4,4,4,1,1,1,1,1,4,3,3,4,4,4,1,1,1,1,1,4,3,3,4,4,4,1,1,1,1,1,4,3,3,4,4,4,1,1,1,1,1,4,3,3,4,4,4,1,1,1},
 		{1,1,4,3,3,3,3,4,4,4,1,1,1,4,3,3,3,3,4,4,4,1,1,1,4,3,3,3,3,4,4,4,1,1,1,4,3,3,3,3,4,4,4,1,1,1,4,3,3,3,3,4,4,4,1},
@@ -126,18 +126,18 @@ public class GameFrame extends JPanel{
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0},
-			{0,12,0,0,0,0,0}
+			{0,0,0,0,0,0,0}
 	};
 	int itemLayer[][] = {
 		{0,0,201,201,201,0,112,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,10,},
 		{201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{13,13,13,13,13,13,13,13,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
-		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
-		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{0,0,0,0,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
@@ -346,6 +346,41 @@ public class GameFrame extends JPanel{
 				g2D.setComposite(opaque);
 				g.drawString(hp, 0, 40);
 			}
+			for(Chest chest: chests) {
+				if(!drawInventory && chest.IsOpen()) {
+					int[][] contents = chest.getContents();
+					for(int i = 0; i < 3; i ++) {
+						for(int j = 0; j < 7; j ++) {
+							g2D.setComposite(transparency);
+							g2D.setColor(Color.LIGHT_GRAY);
+							g2D.fillRect(j * 77 + 54, i * 77 + 250, 72 , 72);
+							for(Tile tile: tiles) {
+								g2D.setComposite(opaque);
+								if(tile.getID() == contents[i][j]) {
+									g2D.drawImage(tile.getImage(), j * 77 + 54, i * 77, 72, 72, null);
+								}
+							}
+						}
+					}
+					for(int i = 0; i < 4; i ++) {
+						for(int j = 0; j < 7; j ++) {
+							g.setColor(Color.BLACK);
+							g.fillRect(j * 77 + 49, i * 77 + 245, 82, 5);
+						}
+					}
+					for(int i = 0; i < 3; i ++) {
+						for(int j = 0; j < 8; j ++) {
+							g.setColor(Color.BLACK);
+							g.fillRect(j * 77 + 49, i * 77 + 245, 5, 77);
+						}
+					}
+				}
+			}
+			for(Chest chest1: chests) {
+				if(itemLayer[realPos2][realPos1] != chest1.getID()) {
+					chest1.close();
+				}
+			}
 			if(drawInventory == true){
 				g.setColor(Color.BLACK);
 				g2D.setComposite(opaque);
@@ -449,6 +484,7 @@ public class GameFrame extends JPanel{
 					}
 				}
 				g2D.setComposite(opaque);
+				for(int i = 3; i < 4; i ++) {
 				for(int p = 0; p < 7; p ++){
 					for(Tile tile: tiles){
 						if(tile.getID() == inventory[i][p]){
@@ -460,6 +496,7 @@ public class GameFrame extends JPanel{
 							g2D.drawImage(sword.getImage(1),(p + 1) * 72, 72 * i + 345, 67, 67, null);
 						}
 					}
+				}
 				}
 				for(Sword sword: swords) {
 					if(sword.getCurrentImage() == sword.image2) {
@@ -492,13 +529,6 @@ public class GameFrame extends JPanel{
 			g.setColor(Color.WHITE);
 			g.drawString("GAME OVER",15,300);
 		}
-			for(int i = 0; i < 4; i ++) {
-				for(int q = 0; q < 7; q ++) {
-					if(inventory[i][q] == sword.getID()) {
-						System.out.println("You Have the Sword!!");
-					}
-				}
-			}
 	}
 	/*public class MouseEvent implements MouseListener{
 
@@ -537,19 +567,16 @@ public class GameFrame extends JPanel{
 		int notches;
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			 notches = e.getWheelRotation();
-			if(notches < -1){
-				if(inventorySlot > 1){
-					inventorySlot --;
-				}
-			} else if(notches > 1){
-				if(inventorySlot < 7){
-					inventorySlot ++;
-				}
+			notches = e.getWheelRotation();
+			if(inventorySlot != 1 && notches <= -1){
+				inventorySlot --;
 			}
+			else if(inventorySlot != 7 && notches >= 1){
+				inventorySlot ++;
+			}
+			repaint();
 		}
-		
-	}
+		}
 	public class DamageTimer implements ActionListener {
 
 		@Override
@@ -710,6 +737,7 @@ public class GameFrame extends JPanel{
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyChar() == 'w'){
+				boolean ba = false;
 				if(drawInventory == false){
 					currentImage = YoshiUp;
 					for(Tile tile: tiles) {
@@ -723,17 +751,22 @@ public class GameFrame extends JPanel{
 							}
 							if(tile.getID() == itemLayer[realPos2 - 1][realPos1]){
 								if(tile.getID() != 10 && tile.getID() != 11){
-									if(k == 0){
-										i--;
-										k = 7;
-									}
-									if(i > -1){
-										k--;
-										inventory[i][k] = tile.getID();
-										itemLayer[realPos2 - 1][realPos1] = 0;
+									for(n = n; n > -1; n --) {
+										for(h = h; h > -1; h --) {
+											if(inventory[n][h] == 0) {
+												inventory[n][h] = tile.getID();
+												itemLayer[realPos2 - 1][realPos1] = 0;
+												ba = true;
+												break;
+											}
+										}
+										if(ba) {
+											break;
+										}
 									}
 								}
 							}
+							ba  = false;
 						}
 					}	
 				} else {
@@ -743,6 +776,7 @@ public class GameFrame extends JPanel{
 				}
 			}
 			else if(e.getKeyChar() == 'a'){
+				boolean ba = false;
 				if(drawInventory == false){
 					currentImage = YoshiLeft;
 						for(Tile tile: tiles) {
@@ -754,7 +788,7 @@ public class GameFrame extends JPanel{
 								pos1 --;
 								break;
 							} 
-							if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
+							/*if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
 								if(tile.getID() != 10 && tile.getID() != 11){
 									if(k == 0){
 										i--;
@@ -767,6 +801,24 @@ public class GameFrame extends JPanel{
 									}
 								}
 							}
+							*/
+							if(tile.getID() == itemLayer[realPos2][realPos1 - 1]){
+								if(tile.getID() != 10 && tile.getID() != 11){
+									for(n = n; n > -1; n --) {
+										for(h = h; h > -1; h --) {
+											if(inventory[n][h] == 0) {
+												inventory[n][h] = tile.getID();
+												itemLayer[realPos2][realPos1 - 1] = 0;
+												ba = true;
+												break;
+											}
+										}
+										if(ba) {
+											break;
+										}
+									}
+								}
+							}
 						}
 					}
 				} else {
@@ -776,6 +828,7 @@ public class GameFrame extends JPanel{
 				}
 			}
 			else if(e.getKeyChar() == 's'){
+				boolean ba = false;
 				if(drawInventory == false){
 					currentImage = YoshiDown;
 					if(realPos2 != 54){
@@ -787,6 +840,7 @@ public class GameFrame extends JPanel{
 								pos2 ++;
 								break;
 							}
+							/*
 							if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
 								if(tile.getID() != 10 && tile.getID() != 11){
 									if(k == 0){
@@ -800,6 +854,24 @@ public class GameFrame extends JPanel{
 									}
 								}
 							}
+							*/
+							if(tile.getID() == itemLayer[realPos2 + 1][realPos1]){
+								if(tile.getID() != 10 && tile.getID() != 11){
+									for(n = n; n > -1; n --) {
+										for(h = h; h > -1; h --) {
+											if(inventory[n][h] == 0) {
+												inventory[n][h] = tile.getID();
+												itemLayer[realPos2 + 1][realPos1] = 0;
+												ba = true;
+												break;
+											}
+										}
+										if(ba) {
+											break;
+										}
+									}
+								}
+							}
 						}
 					}
 				} else {
@@ -809,6 +881,7 @@ public class GameFrame extends JPanel{
 				}
 			}
 			else if(e.getKeyChar() == 'd'){
+				boolean ba = false;
 				if(drawInventory == false){
 					currentImage = YoshiRight;
 					if(realPos1 != 54){
@@ -821,6 +894,7 @@ public class GameFrame extends JPanel{
 									pos1 ++;
 									break;
 								}
+								/*
 								if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
 									if(k == 0){
 										i--;
@@ -830,6 +904,24 @@ public class GameFrame extends JPanel{
 										k--;
 										inventory[i][k] = tile.getID();
 										itemLayer[realPos2][realPos1 + 1] = 0;
+									}
+								}
+								*/
+								if(tile.getID() == itemLayer[realPos2][realPos1 + 1]){
+									if(tile.getID() != 10 && tile.getID() != 11){
+										for(n = n; n > -1; n --) {
+											for(h = h; h > -1; h --) {
+												if(inventory[n][h] == 0) {
+													inventory[n][h] = tile.getID();
+													itemLayer[realPos2][realPos1 + 1] = 0;
+													ba = true;
+													break;
+												}
+											}
+											if(ba) {
+												break;
+											}
+										}
 									}
 								}
 							}
@@ -876,17 +968,25 @@ public class GameFrame extends JPanel{
 			} else if(e.getKeyChar() == '7'){
 				inventorySlot = 7;
 			} else if(e.getKeyChar() == 'm'){
-				if(moveMode == 1){
-					moveMode = 2;
-					pastPos[0] = inventorySelect[0];
-					pastPos[1] = inventorySelect[1];
-					pastSelect = inventory[inventorySelect[1]][inventorySelect[0]];
- 				} else if(moveMode == 2){
- 					moveID = inventory[inventorySelect[1]][inventorySelect[0]];
- 					inventory[pastPos[1]][pastPos[0]] = moveID;
- 					inventory[inventorySelect[1]][inventorySelect[0]] = pastSelect;
-					moveID = 0;
-					moveMode = 1;
+				boolean ba = false;
+				for(Chest chest: chests) {
+					if(!chest.IsOpen()){
+						if(moveMode == 1){
+							moveMode = 2;
+							pastPos[0] = inventorySelect[0];
+							pastPos[1] = inventorySelect[1];
+							pastSelect = inventory[inventorySelect[1]][inventorySelect[0]];
+		 				} else if(moveMode == 2){
+		 					moveID = inventory[inventorySelect[1]][inventorySelect[0]];
+		 					inventory[pastPos[1]][pastPos[0]] = moveID;
+		 					inventory[inventorySelect[1]][inventorySelect[0]] = pastSelect;
+							moveID = 0;
+							moveMode = 1;
+						}
+					} else {
+						int[][] contents = chest.getContents();
+						
+					}
 				}
 			} else if(e.getKeyChar() == 'u'){
 				if(inventory[inventorySelect[1]][inventorySelect[0]] > 0 && drawInventory){
@@ -916,9 +1016,16 @@ public class GameFrame extends JPanel{
 				for(Chest chest: chests) {
 					if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
 						for(a = 0; a < 4; a ++) {
+							if(ba) {
+								break;
+							}
 							for(b = 0; b < 7; b ++) {
 								if(inventory[a][b] - 100 == chest.getID()) {
+									ba = true;
 									hasKey = true;
+								}
+								if(chest.open(hasKey) == 1) {
+									inventory[a][b] = 0;
 									ba = true;
 									break;
 								}
@@ -927,10 +1034,8 @@ public class GameFrame extends JPanel{
 								break;
 							}
 						}
-						System.out.println("FOOgruhgrugrhugruh");
-						if(chest.open(hasKey) == 1) {
-							inventory[a][b] = 0;
-							
+						if(ba) {
+							break;
 						}
 					}
 				}

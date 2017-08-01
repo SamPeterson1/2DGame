@@ -3,7 +3,8 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 public class Chest {
-	int[] contents = {0,0,0,0,0,0,0,0,0};
+	int[][] contents = {{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0}};
+	boolean locked = false;					
 	boolean requiresKey;
 	boolean IsOpen = false;
 	int ID;
@@ -13,8 +14,11 @@ public class Chest {
 	protected void setID(int i) {
 		this.ID = i;
 	}
-	protected void setContents(int[] c) {
+	protected void setContents(int[][] c) {
 		this.contents = c;
+	}
+	public int[][] getContents() {
+		return this.contents;
 	}
 	protected void setImage(String s, String s2) {
 		closed = new ImageIcon(s).getImage();
@@ -36,17 +40,32 @@ public class Chest {
 	}
 	public int open(boolean hasKey) {
 		if(hasKey) {
-			IsOpen = true;
-			texture = open;
+			if(!IsOpen) {
+				requiresKey = false;
+				IsOpen = true;
+				texture = open;
+			} else {
+				IsOpen = false;
+				texture = closed;
+			}
 			return 1;
 		} else if(!this.requiresKey) {
-			texture = open;
-			IsOpen = true;
+			if(!IsOpen) {
+				texture = open;
+				IsOpen = true;
+			} else {
+				texture = closed;
+				IsOpen = false;
+			}
 			return 1;
 		}
 		return 0;
 	}
 	public boolean IsOpen() {
 		return this.IsOpen;
+	}
+	public void close() {
+		texture = closed;
+		IsOpen = false;
 	}
 }
