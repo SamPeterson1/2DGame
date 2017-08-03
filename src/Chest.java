@@ -17,8 +17,8 @@ public class Chest {
 	protected void setContents(int[][] c) {
 		this.contents = c;
 	}
-	public int[][] getContents() {
-		return this.contents;
+	public int getContents(int i, int j) {
+		return this.contents[i][j];
 	}
 	protected void setImage(String s, String s2) {
 		closed = new ImageIcon(s).getImage();
@@ -28,6 +28,10 @@ public class Chest {
 		} else {
 			texture = closed;
 		}
+	}
+	public boolean getLocked() {
+		System.out.println(this.requiresKey);
+		return this.requiresKey;
 	}
 	protected void setKeyRequirement(boolean keyRequired) {
 		this.requiresKey = keyRequired;

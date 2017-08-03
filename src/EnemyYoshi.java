@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class EnemyYoshi extends Enemy {
-	int AILoc1 = 0;
-	int AILoc2 = 0;
 	int distance1 = 0;
 	int distance2 = 0;
 	int real1 = 0;
@@ -22,16 +20,19 @@ public class EnemyYoshi extends Enemy {
 		int playerY = loc2;
 		int yoshiX = AILoc1;
 		int yoshiY = AILoc2;
-		if(real1 - 1 == loc1 && real2 == loc2 || real1 + 1 == loc1 && real2 == loc2 || real1 == loc1 && real2 + 1 == loc2 || real1 == loc1 && real2 - 1 == loc2) {
-			p.DoDamage(Damage);
-			if(real1 - 1 == loc1 && real2 == loc2) {
+		if(real1 + 1 == playerX && real2 == playerY || real1 - 1 == playerX && real2 == playerY || real1 == playerX && real2 + 1 == playerY || real1 == playerX && real2 - 1 == playerY) {
+			if(real1 > playerX) {
+				p.DoDamage(Damage);
 				changeImage(3);
-			} else if(real1 + 1 == loc1 && real2 == loc2) {
-				changeImage(4);				
-			} else if(real1 == loc1 && real2 + 1 == loc2) {
-				changeImage(2);				
-			} else if(real1 == loc1 && real2 - 1 == loc2) {
-				changeImage(1);				
+			} else if(real2 > playerY){
+				p.DoDamage(Damage);
+				changeImage(1);
+			} else if(real1 < playerX) {
+				p.DoDamage(Damage);
+				changeImage(4);
+			} else if(real2 < playerY) {
+				p.DoDamage(Damage);
+				changeImage(2);
 			}
 		} else {
 			if(real1 > playerX) {
@@ -41,6 +42,7 @@ public class EnemyYoshi extends Enemy {
 						real1--;
 						AILoc1 --;
 						changeImage(3);
+						break;
 					}
 				}
 			}
@@ -49,8 +51,9 @@ public class EnemyYoshi extends Enemy {
 				for(Tile tile: tiles) {
 					if(tile.getID() == map[real2 - 1][real1] && tile.getPassable()) {
 						AILoc2--;
-						AILoc2 --;
+						real2--;
 						changeImage(1);
+						break;
 					}
 				}
 	
@@ -62,19 +65,20 @@ public class EnemyYoshi extends Enemy {
 						real1++;
 						AILoc1 ++;
 						changeImage(4);
+						break;
 					}
 				}
 			}
 			else if(real2 < playerY) {
-				System.out.println("Hello4" + real2 + " " + playerY);
+				System.out.println("Hello4");
 				for(Tile tile: tiles) {
 					if(tile.getID() == map[real2 + 1][real1] && tile.getPassable()) {
 						real2++;
 						AILoc2 ++;
 						changeImage(2);
+						break;
 					}
 				}
-			} else {
 			}
 		}
 	}

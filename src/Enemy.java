@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 public class Enemy {
 	int Damage = 0;
+	int AILoc1 = 0;
+	int AILoc2 = 0;
 	Image up;
 	Image down;
 	Image left;

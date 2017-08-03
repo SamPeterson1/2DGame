@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 public class Tile {
 	private boolean IsPassable = false;
+	private boolean isRock = false;
 	private int ID;
 	private int damage = 0;
 	private BufferedImage tileSet;
@@ -13,16 +14,35 @@ public class Tile {
 	private int itemEffect = 0;
 	private boolean IsSolid = false;
 	private int actionIntensity = 0;
+	private int hiding = 0;
 	public Tile() {
 		this.setImage();
 		this.setID(1);
 		this.setTile(1,1);
 	}
-	public void doItemAction(Player p){
-		if(this.itemEffect == 1){
-			//heal
-			p.DoDamage(0 - actionIntensity);
+	protected void setHiding(int hidingID) {
+		this.hiding = hidingID;
+	}
+	protected void setRock(boolean rock) {
+		this.isRock = rock;
+	}
+	public int doItemAction(Player p){
+		if(!isRock) {
+			if(this.itemEffect == 1){
+				//heal
+				p.DoDamage(0 - actionIntensity);
+				return 0;
+			} else if(this.itemEffect == 2) {
+				//excavate
+				System.out.println("HELLO");
+				return 0;
+				//inventory[inventorySelect[1]][inventorySelect[0]] = hiding;
+				//return inventory;
+			}
+		} else {
+			return this.hiding;
 		}
+		return 0;
 	}
 	protected void setEffect(int effect, int intensity){
 		this.itemEffect = effect;

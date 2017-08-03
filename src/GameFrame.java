@@ -54,6 +54,7 @@ public class GameFrame extends JPanel{
 	ArrayList<Sword> swords;
 	ArrayList<Chest> chests;
 	ArrayList<Key> keys;
+	ArrayList<Enemy> enemies;
 	Timer damageTimer;
 	Timer AITimer;
 	Timer ProjectileTimer;
@@ -131,9 +132,9 @@ public class GameFrame extends JPanel{
 			{0,0,0,0,0,0,0}
 	};
 	int itemLayer[][] = {
-		{0,112,201,201,201,150,0,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,113,},
+		{20,112,201,201,201,150,0,13,13,10,0,0,0,201,201,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,10,0,0,0,20,},
 		{201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,201,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
-		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
+		{0,0,0,0,151,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{13,13,13,13,13,13,13,13,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
@@ -187,8 +188,8 @@ public class GameFrame extends JPanel{
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,}
 	};
-	int[][] v = {{13,150,13,13,13,151,13,13,13}, {150,13,150,13,13,150,13,13,13}, {13,13,13,13,13,13,13,0,0}};
-	int[][] o = {{0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0}};
+	int[][] v = {{13,0,0,151,0,0,13}, {13,0,0,150,0,0,13}, {13,0,0,150,0,0,13}};
+	int[][] o = {{1,0,0,0,0,0,1}, {2,0,0,101,0,0,2}, {3,0,0,0,0,0,3}};
 	Player player1 = new Player();
 	EnemyYoshi yoshi = new EnemyYoshi();
 	TileHotRock hotrock = new TileHotRock();
@@ -212,10 +213,12 @@ public class GameFrame extends JPanel{
 	TestSword sword = new TestSword();
 	TestChest chesT = new TestChest(112, v);
 	TestChest chest = new TestChest(113, o);
+	Rock rock = new Rock();
 	Pea pea = new Pea(1);
 	Pea pea2 = new Pea(2);
 	public GameFrame() {
 		super();
+		enemies = new ArrayList<Enemy>();
 		chests = new ArrayList<Chest>();
 		swords = new ArrayList<Sword>();
 		projectiles = new ArrayList<Projectile>();
@@ -241,12 +244,15 @@ public class GameFrame extends JPanel{
 		tiles.add(water);
 		tiles.add(mountain);
 		tiles.add(seal);
+		tiles.add(rock);
 		items.add(banana);
+		items.add(rock);
 		swords.add(sword);
 		chests.add(chest);
 		chests.add(chesT);
 		keys.add(key);
 		keys.add(key2);
+		enemies.add(yoshi);
 		setFocusable(true);	
 		addKeyListener(new YoshiRider());
 		addMouseWheelListener(new mouse());
@@ -291,17 +297,16 @@ public class GameFrame extends JPanel{
 					}
 					for(Key key: keys) {
 						if(key.getID() == itemLayer[a][i]){
-							System.out.println("HELLO");
 							g.drawImage(key.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
 						}
 					}
 				}
 			}
-			if(!yoshi.checkDead()) {
-				AITimer.start();
-				g.drawImage(yoshi.getCurrentImage(), yoshi.getX() * 32, yoshi.getY() * 32, null);
-			} else {
-				AITimer.stop();
+			for(Enemy enemy: enemies) {
+				if(!enemy.checkDead()) {
+					AITimer.start();
+					g.drawImage(enemy.getCurrentImage(), enemy.getX() * 32, enemy.getY() * 32, null);
+				}
 			}
 			for(int a = offsetY; a < 20 + offsetY; a ++){
 				for(int i = offsetX; i < 20 + offsetX; i ++){
@@ -361,9 +366,20 @@ public class GameFrame extends JPanel{
 				g2D.setComposite(opaque);
 				g.drawString(hp, 0, 40);
 			}
+			int[][] contents = {{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+			//start
 			for(Chest chest: chests) {
 				if(!drawInventory && chest.IsOpen()) {
-					int[][] contents = chest.getContents();
+					for(Chest chest2: chests) {
+						if(chest2.IsOpen()) {
+							for(int i = 0; i < 3; i ++) {
+								for(int j = 0; j < 7; j ++) {
+									contents[i][j] = chest2.getContents(i, j);
+								}
+							}
+							break;
+						}
+					}
 					for(int i = 0; i < 3; i ++) {
 						for(int j = 0; j < 7; j ++) {
 							g2D.setComposite(transparency);
@@ -381,22 +397,35 @@ public class GameFrame extends JPanel{
 									g2D.drawImage(key.getImage(), j * 77 + 54, i * 77 + 250, 72, 72, null);
 								}
 							}
+							for(Sword sword: swords) {
+								g2D.setComposite(opaque);
+								if(sword.getID() == contents[i][j]) {
+									g2D.drawImage(sword.getImage(1), j * 77 + 54, i * 77 + 250, 72, 72, null);
+								}
+							}
 						}
 					}
 					for(int i = 0; i < 4; i ++) {
 						for(int j = 0; j < 7; j ++) {
 							g.setColor(Color.BLACK);
+							if(i == chestSelect[1] && j == chestSelect[0] || i - 1 == chestSelect[1] && j == chestSelect[0]) {
+								g.setColor(Color.GRAY);
+							}
 							g.fillRect(j * 77 + 49, i * 77 + 245, 82, 5);
 						}
 					}
 					for(int i = 0; i < 3; i ++) {
 						for(int j = 0; j < 8; j ++) {
 							g.setColor(Color.BLACK);
+							if(i == chestSelect[1] && j == chestSelect[0] || i == chestSelect[1] && j - 1 == chestSelect[0]) {
+								g.setColor(Color.GRAY);
+							}
 							g.fillRect(j * 77 + 49, i * 77 + 245, 5, 77);
 						}
 					}
 				}
 			}
+			// end
 			for(Chest chest1: chests) {
 				if(itemLayer[realPos2][realPos1] != chest1.getID()) {
 					chest1.close();
@@ -623,7 +652,11 @@ public class GameFrame extends JPanel{
 	public class AITimer implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			//yoshi.AI(realPos1, realPos2, tiles, map, player1);
+			for(Enemy enemy: enemies) {
+				if(!enemy.checkDead()) {
+					enemy.AI(realPos1, realPos2, tiles, map, player1);
+				}
+			}
 			repaint();
 		}
 		
@@ -773,8 +806,6 @@ public class GameFrame extends JPanel{
 				for(Chest chest: chests) {
 					if(chest.IsOpen()) {
 						chestOpen = true;
-					} else {
-						chestOpen = false;
 					}
 				}
 					if(drawInventory == false && !chestOpen){
@@ -793,8 +824,8 @@ public class GameFrame extends JPanel{
 							for(Tile tile: tiles) {
 								if(tile.getID() == itemLayer[realPos2][realPos1]){
 									if(tile.getID() != 10 && tile.getID() != 11){
-										for(h = h; h > -1; h --) {
-											System.out.println(n + " " + h + " " + inventory[n][h]);
+										n = 3;
+										for(h = 6; h > -1; h --) {
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2][realPos1] = 0;
@@ -808,30 +839,25 @@ public class GameFrame extends JPanel{
 										}
 									}
 								}
-								for(Key key: keys) {
-									System.out.println("feGHREIU");
-									if(key.getID() == itemLayer[realPos2][realPos1]){
-											for(h = h; h > -1; h --) {
-												System.out.println(n + " " + h + " " + inventory[n][h]);
-												if(inventory[n][h] == 0) {
-													inventory[n][h] = key.getID();
-													itemLayer[realPos2][realPos1] = 0;
-													b = true;
-													break;
-												}
-												if(h == 0) {
-													h = 7;
-													n --;
-												}
+							}
+							for(Key key: keys) {
+								if(key.getID() == itemLayer[realPos2][realPos1]){
+									n = 3;
+										for(h = 6; h > -1; h --) {
+											if(inventory[n][h] == 0) {
+												inventory[n][h] = key.getID();
+												itemLayer[realPos2][realPos1] = 0;
+												b = true;
+												break;
 											}
-
+											if(h == 0) {
+												h = 7;
+												n --;
+											}
+										}
 									}
 								}
-							if(b) {
-								break;
-							}
-							}
-						}	
+							}	
 					} else if(drawInventory){
 						if(inventorySelect[1] > 0){
 							inventorySelect[1] --;
@@ -839,7 +865,6 @@ public class GameFrame extends JPanel{
 					} else if(chestOpen) {
 						if(chestSelect[1] > 0) {
 							chestSelect[1] --;
-							System.out.println(chestSelect[1] + " " + chestSelect[0]);
 						}
 					}
 			}
@@ -881,8 +906,8 @@ public class GameFrame extends JPanel{
 							for(Tile tile: tiles) {
 								if(tile.getID() == itemLayer[realPos2][realPos1]){
 									if(tile.getID() != 10 && tile.getID() != 11){
-										for(h = h; h > -1; h --) {
-											System.out.println(n + " " + h + " " + inventory[n][h]);
+										n = 3;
+										for(h = 6; h > -1; h --) {
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2][realPos1] = 0;
@@ -896,11 +921,11 @@ public class GameFrame extends JPanel{
 										}
 									}
 								}
+							}
 								for(Key key: keys) {
-									System.out.println("feGHREIU");
 									if(key.getID() == itemLayer[realPos2][realPos1]){
-											for(h = h; h > -1; h --) {
-												System.out.println(n + " " + h + " " + inventory[n][h]);
+										n = 3;
+											for(h = 6; h > -1; h --) {
 												if(inventory[n][h] == 0) {
 													inventory[n][h] = key.getID();
 													itemLayer[realPos2][realPos1] = 0;
@@ -915,10 +940,6 @@ public class GameFrame extends JPanel{
 
 									}
 								}
-							if(b) {
-								break;
-							}
-							}
 						}
 					} else if(drawInventory){
 						if(inventorySelect[0] > 0){
@@ -927,7 +948,6 @@ public class GameFrame extends JPanel{
 					} else if(chestOpen){
 						if(chestSelect[0] > 0) {
 							chestSelect[0] --;
-							System.out.println(chestSelect[1] + " " + chestSelect[0]);
 						}
 					}
 			}
@@ -970,8 +990,8 @@ public class GameFrame extends JPanel{
 							for(Tile tile: tiles) {
 								if(tile.getID() == itemLayer[realPos2][realPos1]){
 									if(tile.getID() != 10 && tile.getID() != 11){
-										for(h = h; h > -1; h --) {
-											System.out.println(n + " " + h + " " + inventory[n][h]);
+										n = 3;
+										for(h = 6; h > -1; h --) {
 											if(inventory[n][h] == 0) {
 												inventory[n][h] = tile.getID();
 												itemLayer[realPos2][realPos1] = 0;
@@ -985,38 +1005,32 @@ public class GameFrame extends JPanel{
 										}
 									}
 								}
-								for(Key key: keys) {
-									System.out.println("feGHREIU");
-									if(key.getID() == itemLayer[realPos2][realPos1]){
-											for(h = h; h > -1; h --) {
-												System.out.println(n + " " + h + " " + inventory[n][h]);
-												if(inventory[n][h] == 0) {
-													inventory[n][h] = key.getID();
-													itemLayer[realPos2][realPos1] = 0;
-													b = true;
-													break;
-												}
-												if(h == 0) {
-													h = 7;
-													n --;
-												}
-											}
-
+							}
+							for(Key key: keys) {
+								if(key.getID() == itemLayer[realPos2][realPos1]){
+									n = 3;
+									for(h = 6; h > -1; h --) {
+										if(inventory[n][h] == 0) {
+											inventory[n][h] = key.getID();
+											itemLayer[realPos2][realPos1] = 0;
+											b = true;
+											break;
+										}
+										if(h == 0) {
+											h = 7;
+											n --;
+										}
 									}
 								}
-							if(b) {
-								break;
 							}
-							}
-					} else if(drawInventory){
-						if(inventorySelect[1] < 3){
-							inventorySelect[1] ++;
-						}
-					} else if(chestOpen) {
-						if(chestSelect[1] < 2) {
-							chestSelect[1] ++;
-							System.out.println(chestSelect[1] + " " + chestSelect[0]);
-						}
+					}
+				} else if(drawInventory){
+					if(inventorySelect[1] < 3){
+						inventorySelect[1] ++;
+					}
+				} else if(chestOpen) {
+					if(chestSelect[1] < 2) {
+						chestSelect[1] ++;
 					}
 				}
 			}
@@ -1033,9 +1047,7 @@ public class GameFrame extends JPanel{
 						currentImage = YoshiRight;
 						if(realPos1 != 54){
 							for(Tile tile: tiles) {
-										System.out.println("DEBUG: " + map[realPos2][realPos1 + 1] + " " + tile.getID() + " " + tile.getPassable());
 										if(tile.getID() == map[realPos2][realPos1 + 1] && tile.getPassable()) {
-											System.out.println("MOVE");
 											realPos1 ++;
 											x += 32;
 											going = 4;
@@ -1060,8 +1072,8 @@ public class GameFrame extends JPanel{
 							for(Tile tile: tiles) {
 									if(tile.getID() == itemLayer[realPos2][realPos1]){
 										if(tile.getID() != 10 && tile.getID() != 11){
-											for(h = h; h > -1; h --) {
-												System.out.println(n + " " + h + " " + inventory[n][h]);
+											n = 3;
+											for(h = 6; h > -1; h --) {
 												if(inventory[n][h] == 0) {
 													inventory[n][h] = tile.getID();
 													itemLayer[realPos2][realPos1] = 0;
@@ -1075,11 +1087,11 @@ public class GameFrame extends JPanel{
 											}
 										}
 									}
+							}
 									for(Key key: keys) {
-										System.out.println("feGHREIU");
+										n = 3;
 										if(key.getID() == itemLayer[realPos2][realPos1]){
-												for(h = h; h > -1; h --) {
-													System.out.println(n + " " + h + " " + inventory[n][h]);
+												for(h = 6; h > -1; h --) {
 													if(inventory[n][h] == 0) {
 														inventory[n][h] = key.getID();
 														itemLayer[realPos2][realPos1] = 0;
@@ -1094,10 +1106,6 @@ public class GameFrame extends JPanel{
 
 										}
 									}
-								if(b) {
-									break;
-								}
-							}
 						}
 					} else if(drawInventory){
 						if(inventorySelect[0] < 6){
@@ -1106,7 +1114,6 @@ public class GameFrame extends JPanel{
 					} else if(chestOpen) {
 						if(chestSelect[0] < 6){
 							chestSelect[0] ++;
-							System.out.println(chestSelect[1] + " " + chestSelect[0]);
 						}
 					}
 			} else if(e.getKeyChar() == 'i') {
@@ -1145,8 +1152,14 @@ public class GameFrame extends JPanel{
 			} else if(e.getKeyChar() == '7'){
 				inventorySlot = 7;
 			} else if(e.getKeyChar() == 'm'){
+				boolean chestOpen = false;
+				boolean b = false;
 				for(Chest chest: chests) {
-					if(!chest.IsOpen()){
+					if(chest.IsOpen()) {
+						chestOpen = true;
+					}
+				}
+					if(!chestOpen){
 						if(moveMode == 1){
 							moveMode = 2;
 							pastPos[0] = inventorySelect[0];
@@ -1160,34 +1173,47 @@ public class GameFrame extends JPanel{
 							moveMode = 1;
 						}
 					} else {
-						int[][] contents = chest.getContents();
-						for(h = h; h > -1; h --) {
-							System.out.println("IM HERE!!!!");
-							if(inventory[n][h] == 0) {
-								inventory[n][h] = contents[chestSelect[1]][chestSelect[0]];
-								contents[chestSelect[1]][chestSelect[0]] = 0;
-								if(h == 0) {
-									h = 6;
-									n --;
+						int[][] contents = {{0,0,0,0,0,0,0}, {0,0,0,0,0,0,0}, {0,0,0,0,0,0,0}};
+						for(Chest chest: chests) {
+							if(chest.IsOpen()) {
+								for(int i = 0; i < 3; i ++) {
+									for(int j = 0; j < 7; j ++) {
+										contents[i][j] = chest.getContents(i, j);
+									}
 								}
 								break;
 							}
 						}
+						for(n = 3; n > -1; n --) {
+							for(h = 6; h > -1; h --) {
+								if(inventory[n][h] == 0) {
+									inventory[n][h] = contents[chestSelect[1]][chestSelect[0]];
+									contents[chestSelect[1]][chestSelect[0]] = 0;
+									b = true;
+									break;
+								}
+							}
+							if(b) {
+								break;
+							}
+						}
+						for(Chest chest: chests) {
+							if(chest.IsOpen()) {
+								chest.setContents(contents);
+							}
+						}
 					}
-				}
 			} else if(e.getKeyChar() == 'u'){
 				if(inventory[inventorySelect[1]][inventorySelect[0]] > 0 && drawInventory){
 					for(Tile item: items){
 						if(item.getID() == inventory[inventorySelect[1]][inventorySelect[0]]){
-							item.doItemAction(player1);
-							inventory[inventorySelect[1]][inventorySelect[0]] = 0;
+							inventory[inventorySelect[1]][inventorySelect[0]] = item.doItemAction(player1);
 						}
 					}
 				} else if(inventory[3][inventorySlot - 1] > 0 && !drawInventory) {
 					for(Tile item: items){
 						if(item.getID() == inventory[3][inventorySlot - 1]){
-							item.doItemAction(player1);
-							inventory[3][inventorySlot - 1] = 0;
+							inventory[3][inventorySlot - 1] = item.doItemAction(player1);
 						}
 					}
 				}
@@ -1200,36 +1226,32 @@ public class GameFrame extends JPanel{
 			} else if(e.getKeyChar() == 'o') {
 				boolean hasKey = false;
 				boolean ba = false;
+				boolean locked = false;
 				for(Chest chest: chests) {
+					locked = false;
 					for(Key key: keys) {
 						if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
-							for(a = 0; a < 4; a ++) {
-								if(ba) {
+							if(key.getUnlocks() == chest.getID() && inventory[3][inventorySlot - 1] == key.getID()) {
+								hasKey = true;
+							}
+							if(chest.getLocked()) {
+								locked = true;
+							}
+								if(chest.open(hasKey) == 1 || !locked) {
+									if(locked) {
+										inventory[3][inventorySlot - 1] = 0;
+									}
+									ba = true;
 									break;
 								}
-								for(b = 0; b < 7; b ++) {
-									if(key.getUnlocks() == chest.getID() && inventory[a][b] == key.getID()) {
-										ba = true;
-										hasKey = true;
-										System.out.println("YOU ARE HERE");
-									}
-									if(chest.open(hasKey) == 1) {
-										inventory[a][b] = 0;
-										ba = true;
-										break;
-									}
-								}
-								if(ba) {
-									break;
-								}
-							}
-							if(ba) {
-								break;
-							}
 						}
+					}
+					if(ba) {
+						break;
 					}
 				}
 			} else if(e.getKeyChar() == ' ') {
+				boolean b = false;
 				for(Sword sword: swords) {
 					if(inventory[3][inventorySlot - 1] == sword.getID() && !drawInventory && sword.getWait() >= sword.getSpeed()) {
 						for(Shooter shooter: shooters) {
@@ -1251,21 +1273,30 @@ public class GameFrame extends JPanel{
 								break;
 							}
 						}
-						if(yoshi.getX() == pos1 + 1 && yoshi.getY() == pos2 && currentImage == YoshiRight) {
-							yoshi.doDamage(sword.getDamage());
-							sword.changeImage(2);
-							break;
-						} else if(yoshi.getX() == pos1 - 1 && yoshi.getY() == pos2 && currentImage == YoshiLeft) {
-							yoshi.doDamage(sword.getDamage());
-							sword.changeImage(2);
-							break;
-						} else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 - 1 && currentImage == YoshiUp) {
-							yoshi.doDamage(sword.getDamage());
-							sword.changeImage(2);
-							break;
-						}else if(yoshi.getX() == pos1 && yoshi.getY() == pos2 + 1 && currentImage == YoshiDown) {
-							yoshi.doDamage(sword.getDamage());
-							sword.changeImage(2);
+						for(Enemy enemy: enemies) {
+							if(enemy.getX() == pos1 + 1 && enemy.getY() == pos2 && currentImage == YoshiRight) {
+								enemy.doDamage(sword.getDamage());
+								sword.changeImage(2);
+								b = true;
+								break;
+							} else if(enemy.getX() == pos1 - 1 && enemy.getY() == pos2 && currentImage == YoshiLeft) {
+								enemy.doDamage(sword.getDamage());
+								sword.changeImage(2);
+								b = true;
+								break;
+							} else if(enemy.getX() == pos1 && enemy.getY() == pos2 - 1 && currentImage == YoshiUp) {
+								enemy.doDamage(sword.getDamage());
+								sword.changeImage(2);
+								b = true;
+								break;
+							}else if(enemy.getX() == pos1 && enemy.getY() == pos2 + 1 && currentImage == YoshiDown) {
+								enemy.doDamage(sword.getDamage());
+								sword.changeImage(2);
+								b = true;
+								break;
+							}
+						}
+						if(b) {
 							break;
 						}
 						sword.changeImage(2);
@@ -1281,7 +1312,9 @@ public class GameFrame extends JPanel{
 						y += 32;
 						offsetY --;
 						pos2 ++;
-						yoshi.AILoc2 ++;
+						for(Enemy enemy: enemies) {
+							enemy.AILoc2 ++;
+						}
 						for(Shooter shooter: shooters){
 							shooter.decreaseY(1, 2);
 						}
@@ -1300,7 +1333,9 @@ public class GameFrame extends JPanel{
 						x += 32;
 						offsetX --;
 						pos1 ++;
-						yoshi.AILoc1 ++;
+						for(Enemy enemy: enemies) {
+							enemy.AILoc1 ++;
+						}
 						for(Shooter shooter: shooters){
 							shooter.decreaseX(1, 2);
 						}
@@ -1318,7 +1353,9 @@ public class GameFrame extends JPanel{
 					if(offsetY - 1 < offsetboundaryY - 1){
 						y -= 32;
 						offsetY ++;
-						yoshi.AILoc2 --;
+						for(Enemy enemy: enemies) {
+							enemy.AILoc2 --;
+						}
 						pos2 --;
 						for(Shooter shooter: shooters){
 							shooter.decreaseY(1, 1);
@@ -1338,7 +1375,9 @@ public class GameFrame extends JPanel{
 						x -= 32;
 						offsetX ++;
 						pos1 --;
-						yoshi.AILoc1 --;
+						for(Enemy enemy: enemies) {
+							enemy.AILoc1 --;
+						}
 						for(Shooter shooter: shooters){
 							shooter.decreaseX(1, 1);
 						}
