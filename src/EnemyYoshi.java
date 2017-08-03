@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class EnemyYoshi extends Enemy {
 	int distance1 = 0;
@@ -18,8 +17,6 @@ public class EnemyYoshi extends Enemy {
 	public void AI(int loc1, int loc2, ArrayList<Tile> tiles, int map[][], Player p){
 		int playerX = loc1;
 		int playerY = loc2;
-		int yoshiX = AILoc1;
-		int yoshiY = AILoc2;
 		if(real1 + 1 == playerX && real2 == playerY || real1 - 1 == playerX && real2 == playerY || real1 == playerX && real2 + 1 == playerY || real1 == playerX && real2 - 1 == playerY) {
 			if(real1 > playerX) {
 				p.DoDamage(Damage);
