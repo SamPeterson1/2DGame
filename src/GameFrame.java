@@ -42,12 +42,15 @@ public class GameFrame extends JPanel{
 	boolean swing = false;
 	boolean inEditor = false;
 	boolean inEditorSelection = true;
+	boolean inItemLayer = false;
 	int moveMode = 1;
 	int toggleMove = 0;
 	int toggle = 0;
 	int moveID = 0;
 	int editorSlot = 1;
 	int tileSelected;
+	int OffsetToolbarX = 0;
+	int fullToolbarAmount = 12;
 	int a;
 	int b;
 	ArrayList<Tile> tiles;
@@ -72,6 +75,8 @@ public class GameFrame extends JPanel{
 	int[] chestSelect = {0,0};
 	int[] inventorySelect = {0,0};
 	int[] mapSelect = {0,0};
+	int[] editorToolbar = {1,2,3,4,19,19,19,19};
+	int[] fullToolbar = {1,2,3,4,19,19,19,19,20,150, 151, 13};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
@@ -215,6 +220,7 @@ public class GameFrame extends JPanel{
 	TestSword sword = new TestSword();
 	TestChest chesT = new TestChest(112, v);
 	TestChest chest = new TestChest(113, o);
+	Popsicle popsicle = new Popsicle();
 	Rock rock = new Rock();
 	Pea pea = new Pea(1);
 	Pea pea2 = new Pea(2);
@@ -245,6 +251,7 @@ public class GameFrame extends JPanel{
 		tiles.add(mountain);
 		tiles.add(seal);
 		tiles.add(rock);
+		tiles.add(popsicle);
 		items.add(banana);
 		items.add(rock);
 		swords.add(sword);
@@ -541,23 +548,23 @@ public class GameFrame extends JPanel{
 				}
 				g2D.setComposite(opaque);
 				for(int i = 3; i < 4; i ++) {
-				for(int p = 0; p < 7; p ++){
-					for(Tile tile: tiles){
-						if(tile.getID() == inventory[i][p]){
-							g2D.drawImage(tile.getImage(),(p + 1) * 72, 72 * i + 345, 67, 67, null);
+					for(int p = 0; p < 7; p ++){
+						for(Tile tile: tiles){
+							if(tile.getID() == inventory[i][p]){
+								g2D.drawImage(tile.getImage(),(p + 1) * 72, 72 * i + 345, 67, 67, null);
+							}
+						}
+						for(Key key: keys) {
+							if(key.getID() == inventory[i][p]){
+								g2D.drawImage(key.getImage(),(p + 1) * 72, 72 * i + 345, 67, 67, null);
+							}
+						}
+						for(Sword sword: swords) {
+							if(sword.getID() == inventory[i][p]){
+								g2D.drawImage(sword.getImage(1),(p + 1) * 72, 72 * i + 345, 67, 67, null);
+							}
 						}
 					}
-					for(Key key: keys) {
-						if(key.getID() == inventory[i][p]){
-							g2D.drawImage(key.getImage(),(p + 1) * 72, 72 * i + 345, 67, 67, null);
-						}
-					}
-					for(Sword sword: swords) {
-						if(sword.getID() == inventory[i][p]){
-							g2D.drawImage(sword.getImage(1),(p + 1) * 72, 72 * i + 345, 67, 67, null);
-						}
-					}
-				}
 				}
 				for(Sword sword: swords) {
 					if(sword.getCurrentImage() == sword.image2) {
@@ -590,31 +597,18 @@ public class GameFrame extends JPanel{
 			g.drawString("GAME OVER",15,300);
 		}
 	} else {
-		switch(editorSlot) {
-			case 1:
-				tileSelected = 1;
-				break;
-			case 2:
-				tileSelected = 2;
-				break;
-			case 3:
-				tileSelected = 3;
-				break;
-			case 4:
-				tileSelected = 4;
-				break;
-			case 5:
-				break;
-			case 6:
-				break;
-			case 7:
-				break;
-			case 8:
-				break;
+		for(int i = 0; i < 8; i ++) {
+			editorToolbar[i] = fullToolbar[i + OffsetToolbarX];
 		}
+		tileSelected = editorToolbar[editorSlot - 1];
 		Graphics2D g2D = (Graphics2D)g;
 		AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		AlphaComposite transparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
+		if(!inItemLayer) {
+			map[mapSelect[1]][mapSelect[0]] = tileSelected;
+		} else {
+			itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
+		}
 		System.out.println("You are in the level editor");
 		for(int a = offsetY; a < 20 + offsetY; a ++){
 			for(int i = offsetX; i < 20 + offsetX; i ++){
@@ -656,11 +650,6 @@ public class GameFrame extends JPanel{
 						g.drawImage(key.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
 					}
 				}
-				for(Key key: keys) {
-					if(key.getID() == itemLayer[a][i]){
-						g.drawImage(key.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
-					}
-				}
 				System.out.println(mapSelect[1] + " " + i + " " + mapSelect[0] + a);
 			}
 		}
@@ -668,7 +657,6 @@ public class GameFrame extends JPanel{
 		g.fillRect(mapSelect[0] * 32, (mapSelect[1] * 32) + 30, 32, 2);
 		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 2, 32);
 		g.fillRect(mapSelect[0] * 32 + 30, (mapSelect[1] * 32), 2, 32);
-		map[mapSelect[1]][mapSelect[0]] = tileSelected;
 		for(Shooter shooter1 : shooters){
 			if(!shooter1.getDead()) {
 				g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
@@ -700,6 +688,20 @@ public class GameFrame extends JPanel{
 					g2D.setColor(Color.GRAY);
 				}
 				g2D.fillRect(558 + k * 77, i * 77 + 10, 5, 82);
+			}
+		}
+		for(Tile tile: tiles) {
+			for(int i = 0; i < 8; i ++) {
+				if(tile.getID() == editorToolbar[i]) {
+					g.drawImage(tile.getImage(), 563, i * 77 + 15, 72, 72, null);
+				}
+			}
+		}
+		for(Key key: keys) {
+			for(int i = 0; i < 8; i ++) {
+				if(key.getID() == editorToolbar[i]) {
+					g.drawImage(key.getImage(), 563, i * 77 + 15, 72, 72, null);
+				}
 			}
 		}
 		damageTimer.stop();
@@ -758,6 +760,10 @@ public class GameFrame extends JPanel{
 					editorSlot --;
 				} else if(editorSlot != 8 && notches <= -1) {
 					editorSlot ++;
+				} else if(OffsetToolbarX < fullToolbarAmount - 8 && notches <= -1) {
+					OffsetToolbarX ++;
+				} else if(OffsetToolbarX > 0 && notches >= 1) {
+					OffsetToolbarX --;
 				}
 			}
 			System.out.println(inventorySlot + " " + editorSlot);
@@ -1335,8 +1341,16 @@ public class GameFrame extends JPanel{
 					}
 				}
 			} else if(e.getKeyChar() == 'i') {
-				currentImage = YoshiUp;
-				going = 1;
+				if(!inEditor) {
+					currentImage = YoshiUp;
+					going = 1;
+				} else {
+					if(inItemLayer) {
+						inItemLayer = false;
+					} else {
+						inItemLayer = true;
+					}
+				}
 			} else if(e.getKeyChar() == 'j') {
 				currentImage = YoshiLeft;
 				going = 2;
