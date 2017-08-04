@@ -41,10 +41,13 @@ public class GameFrame extends JPanel{
 	boolean stop = false;
 	boolean swing = false;
 	boolean inEditor = false;
+	boolean inEditorSelection = true;
 	int moveMode = 1;
 	int toggleMove = 0;
 	int toggle = 0;
 	int moveID = 0;
+	int editorSlot = 1;
+	int tileSelected;
 	int a;
 	int b;
 	ArrayList<Tile> tiles;
@@ -68,6 +71,7 @@ public class GameFrame extends JPanel{
 	int[] pastPos = {0,0};
 	int[] chestSelect = {0,0};
 	int[] inventorySelect = {0,0};
+	int[] mapSelect = {0,0};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
@@ -586,6 +590,31 @@ public class GameFrame extends JPanel{
 			g.drawString("GAME OVER",15,300);
 		}
 	} else {
+		switch(editorSlot) {
+			case 1:
+				tileSelected = 1;
+				break;
+			case 2:
+				tileSelected = 2;
+				break;
+			case 3:
+				tileSelected = 3;
+				break;
+			case 4:
+				tileSelected = 4;
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+		}
+		Graphics2D g2D = (Graphics2D)g;
+		AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+		AlphaComposite transparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
 		System.out.println("You are in the level editor");
 		for(int a = offsetY; a < 20 + offsetY; a ++){
 			for(int i = offsetX; i < 20 + offsetX; i ++){
@@ -632,11 +661,45 @@ public class GameFrame extends JPanel{
 						g.drawImage(key.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
 					}
 				}
+				System.out.println(mapSelect[1] + " " + i + " " + mapSelect[0] + a);
 			}
 		}
+		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 32, 2);
+		g.fillRect(mapSelect[0] * 32, (mapSelect[1] * 32) + 30, 32, 2);
+		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 2, 32);
+		g.fillRect(mapSelect[0] * 32 + 30, (mapSelect[1] * 32), 2, 32);
+		map[mapSelect[1]][mapSelect[0]] = tileSelected;
 		for(Shooter shooter1 : shooters){
 			if(!shooter1.getDead()) {
 				g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
+			}
+		}
+		for(Enemy enemy: enemies) {
+			if(!enemy.checkDead()) {
+				g.drawImage(enemy.getCurrentImage(), enemy.getX() * 32, enemy.getY() * 32, null);
+			}
+		}
+		for(int i = 0; i < 8; i ++) {
+			g2D.setComposite(transparency);
+			g2D.setColor(Color.LIGHT_GRAY);
+			g2D.fillRect(563, i * 77 + 15, 72, 72);
+		}
+		for(int i = 0; i < 9; i ++) {
+			g2D.setComposite(opaque);
+			g2D.setColor(Color.BLACK);
+			if(editorSlot - 1 == i || editorSlot - 1 == i - 1) {
+				g2D.setColor(Color.GRAY);
+			}
+			g2D.fillRect(558, i * 77 + 10, 82, 5);
+		}
+		for(int k = 0; k < 2; k ++) {
+			for(int i = 0; i < 8; i ++) {
+				g2D.setComposite(opaque);
+				g2D.setColor(Color.BLACK);
+				if(editorSlot - 1 == i) {
+					g2D.setColor(Color.GRAY);
+				}
+				g2D.fillRect(558 + k * 77, i * 77 + 10, 5, 82);
 			}
 		}
 		damageTimer.stop();
@@ -683,12 +746,21 @@ public class GameFrame extends JPanel{
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			notches = e.getWheelRotation();
-			if(inventorySlot != 1 && notches <= -1){
-				inventorySlot --;
+			if(!inEditor) {
+				if(inventorySlot != 1 && notches <= -1){
+					inventorySlot --;
+				}
+				else if(inventorySlot != 7 && notches >= 1){
+					inventorySlot ++;
+				}
+			} else {
+				if(editorSlot != 1 && notches >= 1) {
+					editorSlot --;
+				} else if(editorSlot != 8 && notches <= -1) {
+					editorSlot ++;
+				}
 			}
-			else if(inventorySlot != 7 && notches >= 1){
-				inventorySlot ++;
-			}
+			System.out.println(inventorySlot + " " + editorSlot);
 			repaint();
 		}
 		}
@@ -920,22 +992,29 @@ public class GameFrame extends JPanel{
 						}
 					}
 				} else {
-					if(offsetY - 1 > -1){
-						y += 32;
-						offsetY --;
-						pos2 ++;
-						for(Enemy enemy: enemies) {
-							enemy.AILoc2 ++;
-						}
-						for(Shooter shooter: shooters){
-							shooter.decreaseY(1, 2);
-						}
-						for(Projectile projectile: projectiles){
-							if(projectile.getMoving() != 0){
-								projectile.originY += 32;
-								projectile.setY(33, 2);
+					if(inEditorSelection) {
+						if(offsetY - 1 > -1){
+							y += 32;
+							offsetY --;
+							pos2 ++;
+							for(Enemy enemy: enemies) {
+								enemy.AILoc2 ++;
+							}
+							for(Shooter shooter: shooters){
+								shooter.decreaseY(1, 2);
+							}
+							for(Projectile projectile: projectiles){
+								if(projectile.getMoving() != 0){
+									projectile.originY += 32;
+									projectile.setY(33, 2);
+								}
 							}
 						}
+					} else {
+						if(mapSelect[1] - 1 >= 0) {
+							mapSelect[1] --;
+						}
+						System.out.println(mapSelect[1]);
 					}
 				}
 			}
@@ -1019,22 +1098,29 @@ public class GameFrame extends JPanel{
 						}
 					}
 				} else {
-					if(offsetX - 1 > -1){
-						x += 32;
-						offsetX --;
-						pos1 ++;
-						for(Enemy enemy: enemies) {
-							enemy.AILoc1 ++;
-						}
-						for(Shooter shooter: shooters){
-							shooter.decreaseX(1, 2);
-						}
-						for(Projectile projectile: projectiles){
-							if(projectile.getMoving() != 0){
-								projectile.originX += 32;
-								projectile.setX(33, 2);
+					if(inEditorSelection) {
+						if(offsetX - 1 > -1){
+							x += 32;
+							offsetX --;
+							pos1 ++;
+							for(Enemy enemy: enemies) {
+								enemy.AILoc1 ++;
+							}
+							for(Shooter shooter: shooters){
+								shooter.decreaseX(1, 2);
+							}
+							for(Projectile projectile: projectiles){
+								if(projectile.getMoving() != 0){
+									projectile.originX += 32;
+									projectile.setX(33, 2);
+								}
 							}
 						}
+					} else {
+						if(mapSelect[0] - 1 >= 0) {
+							mapSelect[0] --;
+						}
+						System.out.println(mapSelect[0]);
 					}
 				}
 			}
@@ -1118,23 +1204,30 @@ public class GameFrame extends JPanel{
 						}
 					}
 				} else {
-					if(offsetY - 1 < offsetboundaryY - 1){
-						y -= 32;
-						offsetY ++;
-						for(Enemy enemy: enemies) {
-							enemy.AILoc2 --;
-						}
-						pos2 --;
-						for(Shooter shooter: shooters){
-							shooter.decreaseY(1, 1);
-						}
-						for(Projectile projectile: projectiles){
-							if(projectile.getMoving() != 0){
-								projectile.originY -= 32;
-								projectile.setY(33, 3);
+					if(inEditorSelection) {
+						if(offsetY - 1 < offsetboundaryY - 1){
+							y -= 32;
+							offsetY ++;
+							for(Enemy enemy: enemies) {
+								enemy.AILoc2 --;
+							}
+							pos2 --;
+							for(Shooter shooter: shooters){
+								shooter.decreaseY(1, 1);
+							}
+							for(Projectile projectile: projectiles){
+								if(projectile.getMoving() != 0){
+									projectile.originY -= 32;
+									projectile.setY(33, 3);
+								}
 							}
 						}
-					}
+					} else {
+						if(mapSelect[1] + 1 <= 54) {
+							mapSelect[1] ++;
+						}
+						System.out.println(mapSelect[1]);
+					} 
 				}
 			}
 			else if(e.getKeyChar() == 'd'){
@@ -1216,22 +1309,29 @@ public class GameFrame extends JPanel{
 						}
 					}
 				} else {
-					if(offsetX + 1 < offsetboundaryX + 1){
-						x -= 32;
-						offsetX ++;
-						pos1 --;
-						for(Enemy enemy: enemies) {
-							enemy.AILoc1 --;
-						}
-						for(Shooter shooter: shooters){
-							shooter.decreaseX(1, 1);
-						}
-						for(Projectile projectile: projectiles){
-							if(projectile.getMoving() != 0){
-								projectile.originX -= 32;
-								projectile.setX(33, 3);
+					if(inEditorSelection) {
+						if(offsetX + 1 < offsetboundaryX + 1){
+							x -= 32;
+							offsetX ++;
+							pos1 --;
+							for(Enemy enemy: enemies) {
+								enemy.AILoc1 --;
+							}
+							for(Shooter shooter: shooters){
+								shooter.decreaseX(1, 1);
+							}
+							for(Projectile projectile: projectiles){
+								if(projectile.getMoving() != 0){
+									projectile.originX -= 32;
+									projectile.setX(33, 3);
+								}
 							}
 						}
+					} else {
+						if(mapSelect[0] + 1 <= 54) {
+							mapSelect[0] ++;
+						}
+						System.out.println(mapSelect[0]);
 					}
 				}
 			} else if(e.getKeyChar() == 'i') {
@@ -1256,19 +1356,51 @@ public class GameFrame extends JPanel{
 					drawInventory = false;
 				}
 			} else if(e.getKeyChar() == '1'){
-				inventorySlot = 1;
+				if(!inEditor) {
+					inventorySlot = 1;
+				} else {
+					editorSlot = 1;
+				}
 			} else if(e.getKeyChar() == '2'){
-				inventorySlot = 2;
+				if(!inEditor) {
+					inventorySlot = 2;
+				} else {
+					editorSlot = 2;
+				}
 			} else if(e.getKeyChar() == '3'){
-				inventorySlot = 3;
+				if(!inEditor) {
+					inventorySlot = 3;
+				} else {
+					editorSlot = 3;
+				}
 			} else if(e.getKeyChar() == '4'){
-				inventorySlot = 4;
+				if(!inEditor) {
+					inventorySlot = 4;
+				} else {
+					editorSlot = 4;
+				}
 			} else if(e.getKeyChar() == '5'){
-				inventorySlot = 5;
+				if(!inEditor) {
+					inventorySlot = 5;
+				} else {
+					editorSlot = 6;
+				}
 			} else if(e.getKeyChar() == '6'){
-				inventorySlot = 6;
+				if(!inEditor) {
+					inventorySlot = 6;
+				} else {
+					editorSlot = 6;
+				}
 			} else if(e.getKeyChar() == '7'){
-				inventorySlot = 7;
+				if(!inEditor) {
+					inventorySlot = 7;
+				} else {
+					editorSlot = 7;
+				}
+			} else if(e.getKeyChar() == '8') { 
+				if(inEditor) {
+					editorSlot = 8;
+				}
 			} else if(e.getKeyChar() == 'm'){
 				boolean chestOpen = false;
 				boolean b = false;
@@ -1428,6 +1560,14 @@ public class GameFrame extends JPanel{
 					inEditor = true;
 				}
 				System.out.println(inEditor);
+			} else if(e.getKeyChar() == 'p') {
+				if(inEditor) {
+					if(inEditorSelection) {
+						inEditorSelection = false;
+					} else {
+						inEditorSelection = true;
+					}
+				}
 			}
 			switch(going){
 			
