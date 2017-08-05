@@ -32,6 +32,10 @@ public class GameFrame extends JPanel{
 	int offsetboundaryY = 35;
 	int going = 0;
 	int inventorySlot = 1;
+	int chestChosen = 0;
+	boolean chestReady = false;
+	boolean chestSelected = false;
+	boolean redraw = false;
 	boolean toggleHealthBar = true;
 	boolean peaOffscreen = false;
 	boolean peaOutOfRange = false;
@@ -50,7 +54,7 @@ public class GameFrame extends JPanel{
 	int editorSlot = 1;
 	int tileSelected;
 	int OffsetToolbarX = 0;
-	int fullToolbarAmount = 12;
+	int fullToolbarAmount = 14;
 	int a;
 	int b;
 	ArrayList<Tile> tiles;
@@ -65,6 +69,7 @@ public class GameFrame extends JPanel{
 	Timer AITimer;
 	Timer ProjectileTimer;
 	Timer ToolWaitTimer;
+	Timer RedrawTimer;
 	Image YoshiRight = new ImageIcon("src/Assets/yoshicut.png").getImage();
 	Image YoshiLeft = new ImageIcon("src/Assets/yoshicutLeft.png").getImage();
 	Image YoshiUp = new ImageIcon("src/Assets/yoshicutUp.png").getImage();
@@ -76,7 +81,7 @@ public class GameFrame extends JPanel{
 	int[] inventorySelect = {0,0};
 	int[] mapSelect = {0,0};
 	int[] editorToolbar = {1,2,3,4,19,19,19,19};
-	int[] fullToolbar = {1,2,3,4,19,19,19,19,20,150, 151, 13};
+	int[] fullToolbar = {1,2,3,4,19,19,19,19,20,150, 151, 13, 112, 122};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
@@ -218,8 +223,26 @@ public class GameFrame extends JPanel{
 	ItemKey key = new ItemKey(112, 150);
 	ItemKey key2 = new ItemKey(113, 151);
 	TestSword sword = new TestSword();
-	TestChest chesT = new TestChest(112, v);
-	TestChest chest = new TestChest(113, o);
+	TestChest chest1 = new TestChest(112, v);
+	TestChest chest2 = new TestChest(113, o);
+	TestChest chest3 = new TestChest(114, o);
+	TestChest chest4 = new TestChest(115, o);
+	TestChest chest5 = new TestChest(116, o);
+	TestChest chest6 = new TestChest(117, o);
+	TestChest chest7 = new TestChest(118, o);
+	TestChest chest8 = new TestChest(119, o);
+	TestChest chest9 = new TestChest(120, o);
+	TestChest chest10 = new TestChest(121, o);
+	UnlockedChest chest11 = new UnlockedChest(122, o);
+	UnlockedChest chest12 = new UnlockedChest(123, o);
+	UnlockedChest chest13 = new UnlockedChest(124, o);
+	UnlockedChest chest14 = new UnlockedChest(122, o);
+	UnlockedChest chest15 = new UnlockedChest(123, o);
+	UnlockedChest chest16 = new UnlockedChest(124, o);
+	UnlockedChest chest17 = new UnlockedChest(125, o);
+	UnlockedChest chest18 = new UnlockedChest(126, o);
+	UnlockedChest chest19 = new UnlockedChest(127, o);
+	UnlockedChest chest20 = new UnlockedChest(128, o);
 	Popsicle popsicle = new Popsicle();
 	Rock rock = new Rock();
 	Pea pea = new Pea(1);
@@ -255,8 +278,26 @@ public class GameFrame extends JPanel{
 		items.add(banana);
 		items.add(rock);
 		swords.add(sword);
-		chests.add(chest);
-		chests.add(chesT);
+		chests.add(chest1);
+		chests.add(chest2);
+		chests.add(chest3);
+		chests.add(chest4);
+		chests.add(chest5);
+		chests.add(chest6);
+		chests.add(chest7);
+		chests.add(chest8);
+		chests.add(chest9);
+		chests.add(chest10);
+		chests.add(chest11);
+		chests.add(chest12);
+		chests.add(chest13);
+		chests.add(chest14);
+		chests.add(chest15);
+		chests.add(chest16);
+		chests.add(chest17);
+		chests.add(chest18);
+		chests.add(chest19);
+		chests.add(chest20);
 		keys.add(key);
 		keys.add(key2);
 		enemies.add(yoshi);
@@ -267,6 +308,7 @@ public class GameFrame extends JPanel{
 		this.damageTimer = new Timer(1000, new DamageTimer());
 		this.ProjectileTimer = new Timer(31, new ProjectileTimer());
 		this.ToolWaitTimer = new Timer(31, new ToolWaitTimer());
+		this.RedrawTimer = new Timer(50, new RedrawTimer());
 		ToolWaitTimer.start();
 	}
 
@@ -597,19 +639,47 @@ public class GameFrame extends JPanel{
 			g.drawString("GAME OVER",15,300);
 		}
 	} else {
+		redraw = false;
+		chestSelected = false;
+		Font large = new Font("Helvetica", Font.BOLD, 50);
+		if(112 == tileSelected || 122 == tileSelected) {
+			chestSelected = true;
+			redraw = true;
+		}
 		for(int i = 0; i < 8; i ++) {
 			editorToolbar[i] = fullToolbar[i + OffsetToolbarX];
 		}
 		tileSelected = editorToolbar[editorSlot - 1];
+		if(inItemLayer){
+			if(tileSelected == 112) {
+				itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected - 1 + chestChosen;
+				chestReady = false;
+			} else if(tileSelected == 122){
+				itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected - 1 + chestChosen;
+				chestReady = false;
+			}
+		}
 		Graphics2D g2D = (Graphics2D)g;
 		AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		AlphaComposite transparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
 		if(!inItemLayer) {
-			map[mapSelect[1]][mapSelect[0]] = tileSelected;
+			for(Tile tile: tiles) {
+				if(tile.getID() == tileSelected && !tile.getItem()) {
+					map[mapSelect[1]][mapSelect[0]] = tileSelected;
+				}
+			}
 		} else {
-			itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
+			for(Tile tile: tiles) {
+				if(tile.getID() == tileSelected && tile.getItem()) {
+					itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
+				}
+			}
+			for(Key key: keys) {
+				if(key.getID() == tileSelected) {
+					itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
+				}
+			}
 		}
-		System.out.println("You are in the level editor");
 		for(int a = offsetY; a < 20 + offsetY; a ++){
 			for(int i = offsetX; i < 20 + offsetX; i ++){
 				/*switch(map[a][i]){
@@ -650,7 +720,6 @@ public class GameFrame extends JPanel{
 						g.drawImage(key.getImage(), i * 32 - offsetX * 32, a * 32 - offsetY * 32, null);
 					}
 				}
-				System.out.println(mapSelect[1] + " " + i + " " + mapSelect[0] + a);
 			}
 		}
 		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 32, 2);
@@ -704,6 +773,13 @@ public class GameFrame extends JPanel{
 				}
 			}
 		}
+		if(chestSelected) {
+			g.setColor(Color.BLACK);
+			g.setFont(large);
+			g.drawString("Select a chest to use.", 0, 200);
+			g.drawString("(Use the numpad)", 0, 300);
+		}
+		RedrawTimer.start();
 		damageTimer.stop();
 		AITimer.stop();
 		ProjectileTimer.stop();
@@ -766,10 +842,18 @@ public class GameFrame extends JPanel{
 					OffsetToolbarX --;
 				}
 			}
-			System.out.println(inventorySlot + " " + editorSlot);
 			repaint();
 		}
 		}
+	public class RedrawTimer implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(redraw) {
+				repaint();
+			}
+		}
+	}
 	public class DamageTimer implements ActionListener {
 
 		@Override
@@ -1020,7 +1104,6 @@ public class GameFrame extends JPanel{
 						if(mapSelect[1] - 1 >= 0) {
 							mapSelect[1] --;
 						}
-						System.out.println(mapSelect[1]);
 					}
 				}
 			}
@@ -1126,7 +1209,6 @@ public class GameFrame extends JPanel{
 						if(mapSelect[0] - 1 >= 0) {
 							mapSelect[0] --;
 						}
-						System.out.println(mapSelect[0]);
 					}
 				}
 			}
@@ -1232,7 +1314,6 @@ public class GameFrame extends JPanel{
 						if(mapSelect[1] + 1 <= 54) {
 							mapSelect[1] ++;
 						}
-						System.out.println(mapSelect[1]);
 					} 
 				}
 			}
@@ -1337,7 +1418,6 @@ public class GameFrame extends JPanel{
 						if(mapSelect[0] + 1 <= 54) {
 							mapSelect[0] ++;
 						}
-						System.out.println(mapSelect[0]);
 					}
 				}
 			} else if(e.getKeyChar() == 'i') {
@@ -1373,47 +1453,97 @@ public class GameFrame extends JPanel{
 				if(!inEditor) {
 					inventorySlot = 1;
 				} else {
-					editorSlot = 1;
+					if(!chestSelected) {
+						editorSlot = 1;
+					} else {
+						chestReady = true;
+						chestChosen = 1;
+					}
 				}
 			} else if(e.getKeyChar() == '2'){
 				if(!inEditor) {
 					inventorySlot = 2;
 				} else {
-					editorSlot = 2;
+					if(!chestSelected) {
+						editorSlot = 2;
+					} else {
+						chestReady = true;
+						chestChosen = 2;
+					}
 				}
 			} else if(e.getKeyChar() == '3'){
 				if(!inEditor) {
 					inventorySlot = 3;
 				} else {
-					editorSlot = 3;
+					if(!chestSelected) {
+						editorSlot = 3;
+					} else {
+						chestReady = true;
+						chestChosen = 3;
+					}
 				}
 			} else if(e.getKeyChar() == '4'){
 				if(!inEditor) {
 					inventorySlot = 4;
 				} else {
-					editorSlot = 4;
+					if(!chestSelected) {
+						editorSlot = 4;
+					} else {
+						chestReady = true;
+						chestChosen = 4;
+					}
 				}
 			} else if(e.getKeyChar() == '5'){
 				if(!inEditor) {
 					inventorySlot = 5;
 				} else {
-					editorSlot = 6;
+					if(!chestSelected) {
+						editorSlot = 5;
+					} else {
+						chestReady = true;
+						chestChosen = 5;
+					}
 				}
 			} else if(e.getKeyChar() == '6'){
 				if(!inEditor) {
 					inventorySlot = 6;
 				} else {
-					editorSlot = 6;
+					if(!chestSelected) {
+						editorSlot = 6;
+					} else {
+						chestReady = true;
+						chestChosen = 6;
+					}
 				}
 			} else if(e.getKeyChar() == '7'){
 				if(!inEditor) {
 					inventorySlot = 7;
 				} else {
-					editorSlot = 7;
+					if(!chestSelected) {
+						editorSlot = 7;
+					} else {
+						chestReady = true;
+						chestChosen = 7;
+					}
 				}
 			} else if(e.getKeyChar() == '8') { 
 				if(inEditor) {
-					editorSlot = 8;
+					if(!chestSelected) {
+						editorSlot = 8;
+					} else {
+						chestReady = true;
+						chestChosen = 8;
+					}
+				}
+			} else if(e.getKeyChar() == '9') {
+				if(inEditor && chestSelected) {
+					chestReady = true;
+					chestChosen = 9;
+				}
+			} else if(e.getKeyChar() == '0') {
+				if(inEditor && chestSelected) {
+					chestReady = true;
+					chestChosen = 10;
 				}
 			} else if(e.getKeyChar() == 'm'){
 				boolean chestOpen = false;
@@ -1573,7 +1703,6 @@ public class GameFrame extends JPanel{
 				} else {
 					inEditor = true;
 				}
-				System.out.println(inEditor);
 			} else if(e.getKeyChar() == 'p') {
 				if(inEditor) {
 					if(inEditorSelection) {

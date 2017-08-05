@@ -8,6 +8,7 @@ public class ItemBanana extends Tile{
 		super.setPassable(true);
 		super.setDamage(0);
 		super.setEffect(1, 5);
+		super.setItem(true);
 	}
 
 }

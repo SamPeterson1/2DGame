@@ -9,5 +9,6 @@ public class Rock extends Tile {
 		super.setEffect(1, 5);
 		super.setHiding(151);
 		super.setRock(true);
+		super.setItem(true);
 	}
 }

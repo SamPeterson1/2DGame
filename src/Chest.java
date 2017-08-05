@@ -14,7 +14,7 @@ public class Chest {
 	protected void setID(int i) {
 		this.ID = i;
 	}
-	protected void setContents(int[][] c) {
+	public void setContents(int[][] c) {
 		this.contents = c;
 	}
 	public int getContents(int i, int j) {

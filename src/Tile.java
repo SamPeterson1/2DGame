@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 public class Tile {
+	private boolean isItem = false;
 	private boolean IsPassable = false;
 	private boolean isRock = false;
 	private int ID;
@@ -25,6 +26,12 @@ public class Tile {
 	}
 	protected void setRock(boolean rock) {
 		this.isRock = rock;
+	}
+	protected void setItem(boolean isItem) {
+		this.isItem = isItem;
+	}
+	public boolean getItem() {
+		return this.isItem;
 	}
 	public int doItemAction(Player p){
 		if(!isRock) {
