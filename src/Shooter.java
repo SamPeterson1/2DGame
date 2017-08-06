@@ -77,6 +77,10 @@ public class Shooter {
 			case 2: 
 				x += DX;
 				break;
+			case 3:
+				realX = DX;
+				x = DX;
+				break;
 		}
 	}
 	public void decreaseY(int DY, int m){
@@ -86,6 +90,10 @@ public class Shooter {
 			break;
 		case 2:
 			y += DY;			
+			break;
+		case 3:
+			realY = DY;
+			y = DY;
 			break;
 		}
 	}
