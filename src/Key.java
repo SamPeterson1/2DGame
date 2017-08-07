@@ -10,7 +10,7 @@ public class Key {
 		this.id = i;
 	}
 	protected void setImage(String str) {
-		this.texture = new ImageIcon(str).getImage();
+		this.texture = new ImageIcon(getClass().getResource(str)).getImage();
 	}
 	public void setUnlocks(int unlockID) {
 		this.unlocks = unlockID;

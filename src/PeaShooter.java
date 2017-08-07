@@ -9,7 +9,7 @@ public class PeaShooter extends Shooter{
 		realY = y1;
 		x = x1;
 		y = y1;
-		super.setImages("src/Assets/PeaShooterUp.png", "src/Assets/PeaShooter.png", "src/Assets/PeaShooterDown.png", "src/Assets/PeaShooterLeft.png");
+		super.setImages("/Assets/PeaShooterUp.png", "/Assets/PeaShooter.png", "/Assets/PeaShooterDown.png", "/Assets/PeaShooterLeft.png");
 	}
 	@Override
 	public int shoot(int realPos1, int realPos2){

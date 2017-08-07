@@ -82,10 +82,10 @@ public class GameFrame extends JPanel{
 	Timer ProjectileTimer;
 	Timer ToolWaitTimer;
 	Timer RedrawTimer;
-	Image YoshiRight = new ImageIcon("src/Assets/yoshicut.png").getImage();
-	Image YoshiLeft = new ImageIcon("src/Assets/yoshicutLeft.png").getImage();
-	Image YoshiUp = new ImageIcon("src/Assets/yoshicutUp.png").getImage();
-	Image YoshiDown = new ImageIcon("src/Assets/yoshicutDown.png").getImage();
+	Image YoshiRight = new ImageIcon(getClass().getResource("/Assets/yoshicut.png")).getImage();
+	Image YoshiLeft = new ImageIcon(getClass().getResource("/Assets/yoshicutLeft.png")).getImage();
+	Image YoshiUp = new ImageIcon(getClass().getResource("/Assets/yoshicutUp.png")).getImage();
+	Image YoshiDown = new ImageIcon(getClass().getResource("/Assets/yoshicutDown.png")).getImage();
 	Image currentImage = YoshiRight;
 	int pastSelect = 0;
 	int[] pastPos = {0,0};
@@ -93,7 +93,7 @@ public class GameFrame extends JPanel{
 	int[] inventorySelect = {0,0};
 	int[] mapSelect = {0,0};
 	int[] editorToolbar = {1,2,3,4,19,19,19,19};
-	int[] fullToolbar = {1,2,3,4,25,5,19,19,20,150, 13, 112, 122, 2001, 2011};
+	int[] fullToolbar = {1,2,3,4,25,5,6,19,20,150, 13, 112, 122, 2001, 2011};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},

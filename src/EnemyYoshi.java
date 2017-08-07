@@ -11,7 +11,7 @@ public class EnemyYoshi extends Enemy {
 		super();
 		super.setDamage(1);
 		super.setHP(2);
-		super.setImages("src/Assets/yoshicutUp.png","src/Assets/yoshicutDown.png", "src/Assets/yoshicutLeft.png", "src/Assets/yoshicut.png");
+		super.setImages("/Assets/yoshicutUp.png","/Assets/yoshicutDown.png", "/Assets/yoshicutLeft.png", "/Assets/yoshicut.png");
 	}
 	@Override
 	public void AI(int loc1, int loc2, ArrayList<Tile> tiles, int map[][], Player p){

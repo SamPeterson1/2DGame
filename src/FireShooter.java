@@ -12,20 +12,20 @@ public class FireShooter extends Shooter{
 		y = y1;
 		/*switch(o){
 		case 1:
-			image = new ImageIcon("src/Assets/PeaShooterUp.png").getImage();
+			image = new ImageIcon("/Assets/PeaShooterUp.png").getImage();
 			break;
 		case 2:
-			image = new ImageIcon("src/Assets/PeaShooter.png").getImage();
+			image = new ImageIcon("/Assets/PeaShooter.png").getImage();
 			break;
 		case 3:
-			image = new ImageIcon("src/Assets/PeaShooterDown.png").getImage();
+			image = new ImageIcon("/Assets/PeaShooterDown.png").getImage();
 			break;
 		case 4:
-			image = new ImageIcon("src/Assets/PeaShooterLeft.png").getImage();
+			image = new ImageIcon("/Assets/PeaShooterLeft.png").getImage();
 			break;
 		}
 		*/
-		super.setImages("src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png");
+		super.setImages("/Assets/FirePeashooter.png", "/Assets/FirePeashooter.png", "/Assets/FirePeashooter.png", "/Assets/FirePeashooter.png");
 	}
 	@Override
 	public int shoot(int realPos1, int realPos2){

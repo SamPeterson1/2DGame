@@ -7,7 +7,7 @@ public class Fireball extends Projectile{
 		super.setRange(5);
 		super.setSpeed(2);
 		super.setID(id);
-		image = new ImageIcon("src/Assets/Fireball.png").getImage();
+		image = new ImageIcon(getClass().getResource("/Assets/Fireball.png")).getImage();
 	}
 
 }

@@ -7,6 +7,6 @@ public class Pea extends Projectile {
 		super.setRange(10);
 		super.setSpeed(1);
 		super.setID(id);
-		image = new ImageIcon("src/Assets/pea.png").getImage();
+		image = new ImageIcon(getClass().getResource("/Assets/pea.png")).getImage();
 	}
 }

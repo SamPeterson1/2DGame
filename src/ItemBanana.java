@@ -3,7 +3,7 @@ public class ItemBanana extends Tile{
 
 	public ItemBanana() {
 		super();
-		super.setTexture("src/Assets/Bannana32.png");
+		super.setTexture("/Assets/Bannana32.png");
 		super.setID(13);
 		super.setPassable(true);
 		super.setDamage(0);

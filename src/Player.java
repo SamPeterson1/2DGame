@@ -9,7 +9,7 @@ public class Player {
 		setImage();
 	}
 	public void setImage(){
-		this.character = new ImageIcon("src/Assets/yoshicut.png").getImage();
+		this.character = new ImageIcon(getClass().getResource("/Assets/yoshicut.png")).getImage();
 	}
 	public Image getImage(){
 		return this.character;

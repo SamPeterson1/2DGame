@@ -21,8 +21,8 @@ public class Chest {
 		return this.contents[i][j];
 	}
 	protected void setImage(String s, String s2) {
-		closed = new ImageIcon(s).getImage();
-		open = new ImageIcon(s2).getImage();
+		closed = new ImageIcon(getClass().getResource(s)).getImage();
+		open = new ImageIcon(getClass().getResource(s2)).getImage();
 		if(IsOpen) {
 			texture = open;
 		} else {

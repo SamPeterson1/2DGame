@@ -61,7 +61,7 @@ public class Tile {
 		return this.itemEffect;
 	}
 	protected void setTexture(String textureLoc){
-		this.tileImage = new ImageIcon(textureLoc).getImage();
+		this.tileImage = new ImageIcon(getClass().getResource(textureLoc)).getImage();
 	}
 	protected void setDamage(int Damage){
 		this.damage = Damage;
@@ -91,7 +91,7 @@ public class Tile {
 		this.tileImage = tileSet.getSubimage((tileSetRow * 32) - 32, (tileSetCol * 32) - 32,32,32);
 	}
 	private void setImage() {
-		this.tileSet = this.toBufferedImage(new ImageIcon("src/Assets/TileSet.png").getImage());
+		this.tileSet = this.toBufferedImage(new ImageIcon(getClass().getResource("/Assets/TileSet.png")).getImage());
 	}
 	public Image getImage() {
 		return tileImage;

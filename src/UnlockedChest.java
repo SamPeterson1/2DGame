@@ -4,6 +4,6 @@ public class UnlockedChest extends Chest {
 		super.setID(id);
 		super.setContents(contents);
 		super.setKeyRequirement(false);
-		super.setImage("src/Assets/ChestIron.png", "src/Assets/.png");
+		super.setImage("/Assets/ChestIron.png", "/Assets/Rock.png");
 	}
 }

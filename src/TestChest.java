@@ -4,6 +4,6 @@ public class TestChest extends Chest{
 		super.setID(id);
 		super.setContents(contents);
 		super.setKeyRequirement(true);
-		super.setImage("src/Assets/ChestGold.png", "src/Assets/HarpSeal.png");
+		super.setImage("/Assets/ChestGold.png", "/Assets/HarpSeal.png");
 	}
 }

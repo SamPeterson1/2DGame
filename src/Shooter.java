@@ -25,10 +25,10 @@ public class Shooter {
 		}
 	}
 	public void setImages(String s1, String s2, String s3, String s4) {
-		image1 = new ImageIcon(s1).getImage();
-		image2 = new ImageIcon(s2).getImage();
-		image3 = new ImageIcon(s3).getImage();
-		image4 = new ImageIcon(s4).getImage();
+		image1 = new ImageIcon(getClass().getResource(s1)).getImage();
+		image2 = new ImageIcon(getClass().getResource(s2)).getImage();
+		image3 = new ImageIcon(getClass().getResource(s3)).getImage();
+		image4 = new ImageIcon(getClass().getResource(s4)).getImage();
 	}
 	public boolean getDead() {
 		return this.Dead;

@@ -33,10 +33,10 @@ public class Enemy {
 		return this.dead;
 	}
 	public void setImages(String s1, String s2, String s3, String s4) {
-		up = new ImageIcon(s1).getImage();
-		down = new ImageIcon(s2).getImage();
-		left = new ImageIcon(s3).getImage();
-		right = new ImageIcon(s4).getImage();
+		up = new ImageIcon(getClass().getResource(s1)).getImage();
+		down = new ImageIcon(getClass().getResource(s2)).getImage();
+		left = new ImageIcon(getClass().getResource(s3)).getImage();
+		right = new ImageIcon(getClass().getResource(s4)).getImage();
 		this.currentImage = right;
 	}
 	public void changeImage(int s) {

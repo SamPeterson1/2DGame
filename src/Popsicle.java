@@ -4,6 +4,6 @@ public class Popsicle extends Tile {
 		super();
 		super.setID(19);
 		super.setPassable(true);
-		super.setTexture("src/Assets/Popsicle.png");
+		super.setTexture("/Assets/Popsicle.png");
 	}
 }
