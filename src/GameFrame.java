@@ -32,9 +32,14 @@ public class GameFrame extends JPanel{
 	int offsetboundaryY = 35;
 	int going = 0;
 	int inventorySlot = 1;
+	int chestEditorSlot = 0;
+	int itemAmount = 0;
 	int chestChosen = 0;
+	int mapOffsetX = 0;
+	int mapOffsetY = 0;
 	boolean chestReady = false;
 	boolean chestSelected = false;
+	boolean keySelected = false;
 	boolean redraw = false;
 	boolean toggleHealthBar = true;
 	boolean peaOffscreen = false;
@@ -47,8 +52,11 @@ public class GameFrame extends JPanel{
 	boolean inEditor = false;
 	boolean inEditorSelection = true;
 	boolean inItemLayer = false;
+	boolean rotating = false;
 	boolean shooterSelected = false;
 	boolean shooterReady = false; 
+	boolean keyReady = false;
+	boolean displayChestEditorGUI = false;
 	int moveMode = 1;
 	int toggleMove = 0;
 	int toggle = 0;
@@ -56,8 +64,9 @@ public class GameFrame extends JPanel{
 	int editorSlot = 1;
 	int tileSelected;
 	int shooterChosen = 0;
+	int keyChosen = 0;
 	int OffsetToolbarX = 0;
-	int fullToolbarAmount = 16;
+	int fullToolbarAmount = 15;
 	int a;
 	int b;
 	ArrayList<Tile> tiles;
@@ -84,7 +93,7 @@ public class GameFrame extends JPanel{
 	int[] inventorySelect = {0,0};
 	int[] mapSelect = {0,0};
 	int[] editorToolbar = {1,2,3,4,19,19,19,19};
-	int[] fullToolbar = {1,2,3,4,19,19,19,19,20,150, 151, 13, 112, 122, 2001, 2004};
+	int[] fullToolbar = {1,2,3,4,25,5,19,19,20,150, 13, 112, 122, 2001, 2011};
 	int map[][] = {
 		{2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1},
 		{1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1},
@@ -205,8 +214,16 @@ public class GameFrame extends JPanel{
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,}
 	};
-	int[][] v = {{13,0,0,151,0,0,13}, {13,0,0,150,0,0,13}, {13,0,0,150,0,0,13}};
-	int[][] o = {{1,0,0,0,0,0,1}, {2,0,0,101,0,0,2}, {3,0,0,0,0,0,3}};
+	int[][] c1 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,151,13}};
+	int[][] c2 = {{13,0,0,0,0,0,13},{0,0,0,20,0,0,0},{13,0,0,0,0,0,13}};
+	int[][] c3 = {{13,0,0,0,0,0,13},{0,0,0,0,0,0,0},{13,0,0,0,0,153,13}};
+	int[][] c4 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,154,13}};
+	int[][] c5 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,0,13}};
+	int[][] c6 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,0,13}};
+	int[][] c7 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,157,150,13}};
+	int[][] c8 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,0,13}};
+	int[][] c9 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,156,13}};
+	int[][] c10 = {{13,0,0,0,0,0,13},{0,0,0,101,0,0,0},{13,0,0,0,0,0,13}};
 	Player player1 = new Player();
 	EnemyYoshi yoshi = new EnemyYoshi();
 	TileHotRock hotrock = new TileHotRock();
@@ -214,54 +231,61 @@ public class GameFrame extends JPanel{
 	TileWater water = new TileWater();
 	TileTree tree = new TileTree();
 	TileGrass grass = new TileGrass();
+	TileRocks rocks = new TileRocks();
 	TileMountain mountain = new TileMountain();
 	TileHarpSeal seal = new TileHarpSeal();
 	ItemBanana banana = new ItemBanana();
-	S17Shooter shooter17 = new S17Shooter(3, 8, 9, 2003);
-	PeaShooter peaShooter1 = new PeaShooter(2, 5, 5, 2001);
-	PeaShooter peaShooter2 = new PeaShooter(3, 10, 10, 2002);
-	PeaShooter peaShooter3 = new PeaShooter(2, 5, 5, 2003);
-	PeaShooter peaShooter4 = new PeaShooter(3, 10, 10, 2004);
-	PeaShooter peaShooter5 = new PeaShooter(2, 5, 5, 2005);
-	PeaShooter peaShooter6 = new PeaShooter(3, 10, 10, 2006);
-	PeaShooter peaShooter7 = new PeaShooter(2, 5, 5, 2007);
-	PeaShooter peaShooter8 = new PeaShooter(3, 10, 10, 2008);
-	PeaShooter peaShooter9 = new PeaShooter(2, 5, 5, 2009);
-	PeaShooter peaShooter10 = new PeaShooter(2, 5, 5, 2010);
-	Seventeen seventeen = new Seventeen(2003);
-	FireShooter fireShooter1 = new FireShooter(2, 15, 7, 2011);
-	FireShooter fireShooter2 = new FireShooter(2, 15, 7, 2012);
-	FireShooter fireShooter3 = new FireShooter(2, 15, 7, 2013);
-	FireShooter fireShooter4 = new FireShooter(2, 15, 7, 2014);
-	FireShooter fireShooter5 = new FireShooter(2, 15, 7, 2015);
-	FireShooter fireShooter6 = new FireShooter(2, 15, 7, 2016);
-	FireShooter fireShooter7 = new FireShooter(2, 15, 7, 2017);
-	FireShooter fireShooter8 = new FireShooter(2, 15, 7, 2018);
-	FireShooter fireShooter9 = new FireShooter(2, 15, 7, 2019);
-	FireShooter fireShooter10 = new FireShooter(2, 15, 7, 2020);
-	ItemKey key = new ItemKey(112, 150);
+	PeaShooter peaShooter1 = new PeaShooter(2, -1, -1, 2001);
+	PeaShooter peaShooter2 = new PeaShooter(3, -1, -1, 2002);
+	PeaShooter peaShooter3 = new PeaShooter(2, -1, -1, 2003);
+	PeaShooter peaShooter4 = new PeaShooter(3, -1, -1, 2004);
+	PeaShooter peaShooter5 = new PeaShooter(2, -1, -1, 2005);
+	PeaShooter peaShooter6 = new PeaShooter(3, -1, -1, 2006);
+	PeaShooter peaShooter7 = new PeaShooter(2, -1, -1, 2007);
+	PeaShooter peaShooter8 = new PeaShooter(3, -1, -1, 2008);
+	PeaShooter peaShooter9 = new PeaShooter(2, -1, -1, 2009);
+	PeaShooter peaShooter10 = new PeaShooter(2, -1, -1, 2010);
+	FireShooter fireShooter1 = new FireShooter(2, -1, -1, 2011);
+	FireShooter fireShooter2 = new FireShooter(2, -1, -1, 2012);
+	FireShooter fireShooter3 = new FireShooter(2, -1, -1, 2013);
+	FireShooter fireShooter4 = new FireShooter(2, -1, -1, 2014);
+	FireShooter fireShooter5 = new FireShooter(2, -1, -1, 2015);
+	FireShooter fireShooter6 = new FireShooter(2, -1, -1, 2016);
+	FireShooter fireShooter7 = new FireShooter(2, -1, -1, 2017);
+	FireShooter fireShooter8 = new FireShooter(2, -1, -1, 2018);
+	FireShooter fireShooter9 = new FireShooter(2, -1, -1, 2019);
+	FireShooter fireShooter10 = new FireShooter(2, -1, -1, 2020);
+	ItemKey key1 = new ItemKey(112, 150);
 	ItemKey key2 = new ItemKey(113, 151);
+	ItemKey key3 = new ItemKey(114, 152);
+	ItemKey key4 = new ItemKey(115, 153);
+	ItemKey key5 = new ItemKey(116, 154);
+	ItemKey key6 = new ItemKey(117, 155);
+	ItemKey key7 = new ItemKey(118, 156);
+	ItemKey key8 = new ItemKey(119, 157);
+	ItemKey key9 = new ItemKey(120, 158);
+	ItemKey key10 = new ItemKey(121, 159);
 	TestSword sword = new TestSword();
-	TestChest chest1 = new TestChest(112, v);
-	TestChest chest2 = new TestChest(113, o);
-	TestChest chest3 = new TestChest(114, o);
-	TestChest chest4 = new TestChest(115, o);
-	TestChest chest5 = new TestChest(116, o);
-	TestChest chest6 = new TestChest(117, o);
-	TestChest chest7 = new TestChest(118, o);
-	TestChest chest8 = new TestChest(119, o);
-	TestChest chest9 = new TestChest(120, o);
-	TestChest chest10 = new TestChest(121, o);
-	UnlockedChest chest11 = new UnlockedChest(122, o);
-	UnlockedChest chest12 = new UnlockedChest(123, o);
-	UnlockedChest chest13 = new UnlockedChest(124, o);
-	UnlockedChest chest14 = new UnlockedChest(122, o);
-	UnlockedChest chest15 = new UnlockedChest(123, o);
-	UnlockedChest chest16 = new UnlockedChest(124, o);
-	UnlockedChest chest17 = new UnlockedChest(125, o);
-	UnlockedChest chest18 = new UnlockedChest(126, o);
-	UnlockedChest chest19 = new UnlockedChest(127, o);
-	UnlockedChest chest20 = new UnlockedChest(128, o);
+	TestChest chest1 = new TestChest(112, c1);
+	TestChest chest2 = new TestChest(113, c2);
+	TestChest chest3 = new TestChest(114, c3);
+	TestChest chest4 = new TestChest(115, c4);
+	TestChest chest5 = new TestChest(116, c5);
+	TestChest chest6 = new TestChest(117, c6);
+	TestChest chest7 = new TestChest(118, c7);
+	TestChest chest8 = new TestChest(119, c8);
+	TestChest chest9 = new TestChest(120, c9);
+	TestChest chest10 = new TestChest(121, c10);
+	UnlockedChest chest11 = new UnlockedChest(122, c1);
+	UnlockedChest chest12 = new UnlockedChest(123, c2);
+	UnlockedChest chest13 = new UnlockedChest(124, c3);
+	UnlockedChest chest14 = new UnlockedChest(122, c4);
+	UnlockedChest chest15 = new UnlockedChest(123, c5);
+	UnlockedChest chest16 = new UnlockedChest(124, c6);
+	UnlockedChest chest17 = new UnlockedChest(125, c7);
+	UnlockedChest chest18 = new UnlockedChest(126, c8);
+	UnlockedChest chest19 = new UnlockedChest(127, c9);
+	UnlockedChest chest20 = new UnlockedChest(128, c10);
 	Popsicle popsicle = new Popsicle();
 	Rock rock = new Rock();
 	Pea pea1 = new Pea(2001);
@@ -314,8 +338,6 @@ public class GameFrame extends JPanel{
 		projectiles.add(pea8);
 		projectiles.add(pea9);
 		projectiles.add(pea10);
-		projectiles.add(seventeen);
-		shooters.add(shooter17);
 		shooters.add(fireShooter1);
 		shooters.add(fireShooter2);
 		shooters.add(fireShooter3);
@@ -338,6 +360,7 @@ public class GameFrame extends JPanel{
 		shooters.add(peaShooter10);
 		tiles.add(banana);
 		tiles.add(hotrock);
+		tiles.add(rocks);
 		tiles.add(tree);
 		tiles.add(grass);
 		tiles.add(sand);
@@ -369,8 +392,16 @@ public class GameFrame extends JPanel{
 		chests.add(chest18);
 		chests.add(chest19);
 		chests.add(chest20);
-		keys.add(key);
+		keys.add(key1);
 		keys.add(key2);
+		keys.add(key3);
+		keys.add(key4);
+		keys.add(key5);
+		keys.add(key6);
+		keys.add(key7);
+		keys.add(key8);
+		keys.add(key9);
+		keys.add(key10);
 		enemies.add(yoshi);
 		setFocusable(true);	
 		addKeyListener(new YoshiRider());
@@ -386,7 +417,7 @@ public class GameFrame extends JPanel{
 	public void paint(Graphics g){
 		if(!inEditor) {
 			if(stop == false){
-			ProjectileTimer.start();
+			rotating = false;
 			for(int a = offsetY; a < 20 + offsetY; a ++){
 				for(int i = offsetX; i < 20 + offsetX; i ++){
 					/*switch(map[a][i]){
@@ -711,13 +742,22 @@ public class GameFrame extends JPanel{
 			g.drawString("GAME OVER",15,300);
 		}
 	} else {
-		redraw = false;
 		shooterSelected = false;
 		chestSelected = false;
+		keySelected = false;
 		Font large = new Font("Helvetica", Font.BOLD, 50);
 		if(112 == tileSelected || 122 == tileSelected) {
 			chestSelected = true;
 			redraw = true;
+		}
+		for(Key key: keys) {
+			System.out.println("CHECK");
+			if(key.getID() == tileSelected) {
+				System.out.println("SUCESS");
+				keySelected = true;
+				redraw = true;
+				break;
+			}
 		}
 		for(Shooter shooter: shooters) {
 			if(shooter.getID() == tileSelected) {
@@ -750,6 +790,13 @@ public class GameFrame extends JPanel{
 				}
 			}
 		}
+		if(keyReady && inItemLayer) {
+			for(Key key: keys) {
+				if(key.getID() == tileSelected - 1 + keyChosen) {
+					itemLayer[mapSelect[1]][mapSelect[0]] = key.getID();
+				}
+			}
+		}
 		Graphics2D g2D = (Graphics2D)g;
 		AlphaComposite opaque = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 		AlphaComposite transparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f);
@@ -762,11 +809,6 @@ public class GameFrame extends JPanel{
 		} else {
 			for(Tile tile: tiles) {
 				if(tile.getID() == tileSelected && tile.getItem()) {
-					itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
-				}
-			}
-			for(Key key: keys) {
-				if(key.getID() == tileSelected) {
 					itemLayer[mapSelect[1]][mapSelect[0]] = tileSelected;
 				}
 			}
@@ -813,10 +855,10 @@ public class GameFrame extends JPanel{
 				}
 			}
 		}
-		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 32, 2);
-		g.fillRect(mapSelect[0] * 32, (mapSelect[1] * 32) + 30, 32, 2);
-		g.fillRect(mapSelect[0] * 32, mapSelect[1] * 32, 2, 32);
-		g.fillRect(mapSelect[0] * 32 + 30, (mapSelect[1] * 32), 2, 32);
+		g.fillRect((mapSelect[0] + mapOffsetX) * 32, (mapSelect[1] + mapOffsetY) * 32, 32, 2);
+		g.fillRect((mapSelect[0] + mapOffsetX) * 32, (mapSelect[1] + mapOffsetY) * 32 + 30, 32, 2);
+		g.fillRect((mapSelect[0] + mapOffsetX) * 32, (mapSelect[1] + mapOffsetY) * 32, 2, 32);
+		g.fillRect((mapSelect[0] + mapOffsetX) * 32 + 30, ((mapSelect[1] + mapOffsetY) * 32), 2, 32);
 		for(Shooter shooter1 : shooters){
 			if(!shooter1.getDead()) {
 				g.drawImage(shooter1.getImage(), shooter1.getX() * 32, shooter1.getY() * 32, null);
@@ -827,43 +869,57 @@ public class GameFrame extends JPanel{
 				g.drawImage(enemy.getCurrentImage(), enemy.getX() * 32, enemy.getY() * 32, null);
 			}
 		}
-		for(int i = 0; i < 8; i ++) {
-			g2D.setComposite(transparency);
-			g2D.setColor(Color.LIGHT_GRAY);
-			g2D.fillRect(563, i * 77 + 15, 72, 72);
-		}
-		for(int i = 0; i < 9; i ++) {
-			g2D.setComposite(opaque);
-			g2D.setColor(Color.BLACK);
-			if(editorSlot - 1 == i || editorSlot - 1 == i - 1) {
-				g2D.setColor(Color.GRAY);
-			}
-			g2D.fillRect(558, i * 77 + 10, 82, 5);
-		}
-		for(int k = 0; k < 2; k ++) {
 			for(int i = 0; i < 8; i ++) {
+				g2D.setComposite(transparency);
+				g2D.setColor(Color.LIGHT_GRAY);
+				g2D.fillRect(563, i * 77 + 15, 72, 72);
+			}
+			for(int i = 0; i < 9; i ++) {
 				g2D.setComposite(opaque);
 				g2D.setColor(Color.BLACK);
-				if(editorSlot - 1 == i) {
+				if(editorSlot - 1 == i || editorSlot - 1 == i - 1) {
 					g2D.setColor(Color.GRAY);
 				}
-				g2D.fillRect(558 + k * 77, i * 77 + 10, 5, 82);
+				g2D.fillRect(558, i * 77 + 10, 82, 5);
 			}
-		}
-		for(Tile tile: tiles) {
-			for(int i = 0; i < 8; i ++) {
-				if(tile.getID() == editorToolbar[i]) {
-					g.drawImage(tile.getImage(), 563, i * 77 + 15, 72, 72, null);
+			for(int k = 0; k < 2; k ++) {
+				for(int i = 0; i < 8; i ++) {
+					g2D.setComposite(opaque);
+					g2D.setColor(Color.BLACK);
+					if(editorSlot - 1 == i) {
+						g2D.setColor(Color.GRAY);
+					}
+					g2D.fillRect(558 + k * 77, i * 77 + 10, 5, 82);
 				}
 			}
-		}
-		for(Key key: keys) {
-			for(int i = 0; i < 8; i ++) {
-				if(key.getID() == editorToolbar[i]) {
-					g.drawImage(key.getImage(), 563, i * 77 + 15, 72, 72, null);
+			for(Chest chest: chests) {
+				for(int i = 0; i < 8; i ++) {
+					if(chest.getID() == editorToolbar[i]) {
+						g.drawImage(chest.getImage(), 563, i * 77 + 15, 72, 72, null);
+					}
 				}
 			}
-		}
+			for(Shooter shooter: shooters) {
+				for(int i = 0; i < 8; i ++) {
+					if(shooter.getID() == editorToolbar[i]) {
+						g.drawImage(shooter.getImage(), 563, i * 77 + 15, 72, 72, null);
+					}
+				}
+			}
+			for(Tile tile: tiles) {
+				for(int i = 0; i < 8; i ++) {
+					if(tile.getID() == editorToolbar[i]) {
+						g.drawImage(tile.getImage(), 563, i * 77 + 15, 72, 72, null);
+					}
+				}
+			}
+			for(Key key: keys) {
+				for(int i = 0; i < 8; i ++) {
+					if(key.getID() == editorToolbar[i]) {
+						g.drawImage(key.getImage(), 563, i * 77 + 15, 72, 72, null);
+					}
+				}
+			}
 		if(chestSelected) {
 			g.setColor(Color.BLACK);
 			g.setFont(large);
@@ -876,13 +932,19 @@ public class GameFrame extends JPanel{
 			g.drawString("Select a shooter to use.", 0, 200);
 			g.drawString("(Use the numpad)", 0, 300);
 		}
+		if(keySelected) {
+			g.setColor(Color.BLACK);
+			g.setFont(large);
+			g.drawString("Select a key to use.", 0, 200);
+			g.drawString("(Use the numpad)", 0, 300);
+		}
 		RedrawTimer.start();
 		damageTimer.stop();
 		AITimer.stop();
 		ProjectileTimer.stop();
 		ToolWaitTimer.stop();
 	}
-	}
+}
 	/*public class MouseEvent implements MouseListener{
 
 		@Override
@@ -928,7 +990,7 @@ public class GameFrame extends JPanel{
 				else if(inventorySlot != 7 && notches >= 1){
 					inventorySlot ++;
 				}
-			} else {
+			} else if(!displayChestEditorGUI){
 				if(editorSlot != 1 && notches >= 1) {
 					editorSlot --;
 				} else if(editorSlot != 8 && notches <= -1) {
@@ -938,6 +1000,13 @@ public class GameFrame extends JPanel{
 				} else if(OffsetToolbarX > 0 && notches >= 1) {
 					OffsetToolbarX --;
 				}
+			} else {
+				if(notches >= 1 && chestEditorSlot < itemAmount) {
+					chestEditorSlot ++;
+				} else if(notches <= -1 && chestEditorSlot > 0) {
+					chestEditorSlot --;
+				}
+				System.out.println(chestEditorSlot);
 			}
 			repaint();
 		}
@@ -1198,6 +1267,7 @@ public class GameFrame extends JPanel{
 									projectile.setY(33, 2);
 								}
 							}
+							mapOffsetY ++;
 						}
 					} else {
 						if(mapSelect[1] - 1 >= 0) {
@@ -1303,6 +1373,7 @@ public class GameFrame extends JPanel{
 									projectile.setX(33, 2);
 								}
 							}
+							mapOffsetX ++;
 						}
 					} else {
 						if(mapSelect[0] - 1 >= 0) {
@@ -1408,6 +1479,7 @@ public class GameFrame extends JPanel{
 									projectile.setY(33, 3);
 								}
 							}
+							mapOffsetY --;
 						}
 					} else {
 						if(mapSelect[1] + 1 <= 54) {
@@ -1512,6 +1584,7 @@ public class GameFrame extends JPanel{
 									projectile.setX(33, 3);
 								}
 							}
+							mapOffsetX --;
 						}
 					} else {
 						if(mapSelect[0] + 1 <= 54) {
@@ -1520,25 +1593,59 @@ public class GameFrame extends JPanel{
 					}
 				}
 			} else if(e.getKeyChar() == 'i') {
-				if(!inEditor) {
+				if(!inEditor && !rotating) {
 					currentImage = YoshiUp;
 					going = 1;
-				} else {
+				} else if(!rotating){
 					if(inItemLayer) {
 						inItemLayer = false;
 					} else {
 						inItemLayer = true;
 					}
+				} else if(rotating && shooterReady && inEditor) {
+					for(Shooter shooter: shooters) {
+						if(shooter.getID() == tileSelected - 1 + shooterChosen) {
+							shooter.setOrientation(1);
+							break;
+						}
+					}
 				}
 			} else if(e.getKeyChar() == 'j') {
-				currentImage = YoshiLeft;
-				going = 2;
+				if(!rotating) {
+					currentImage = YoshiLeft;
+					going = 2;
+				} else if(shooterReady && inEditor){
+					for(Shooter shooter: shooters) {
+						if(shooter.getID() == tileSelected - 1 + shooterChosen) {
+							shooter.setOrientation(4);
+							break;
+						}
+					}
+				}
 			} else if(e.getKeyChar() == 'k') {
-				currentImage = YoshiDown;
-				going = 3;
+				if(!rotating) {
+					currentImage = YoshiDown;
+					going = 3;
+				} else if(shooterReady && inEditor){
+					for(Shooter shooter: shooters) {
+						if(shooter.getID() == tileSelected - 1 + shooterChosen) {
+							shooter.setOrientation(3);
+							break;
+						}
+					}
+				}
 			} else if(e.getKeyChar() == 'l') {
-				currentImage = YoshiRight;
-				going = 4;
+				if(!rotating) {
+					currentImage = YoshiRight;
+					going = 4;
+				} else if(shooterReady && inEditor) {
+					for(Shooter shooter: shooters) {
+						if(shooter.getID() == tileSelected - 1 + shooterChosen) {
+							shooter.setOrientation(2);
+							break;
+						}
+					}
+				}
 			}
 			else if(e.getKeyChar() == 'v'){
 				if(toggle == 0){
@@ -1548,11 +1655,17 @@ public class GameFrame extends JPanel{
 					toggle = 0;
 					drawInventory = false;
 				}
+			} else if(e.getKeyChar() == 'r') {
+				if(rotating) {
+					rotating = false;
+				} else {
+					rotating = true;
+				}
 			} else if(e.getKeyChar() == '1'){
 				if(!inEditor) {
 					inventorySlot = 1;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 1;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1560,13 +1673,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 1;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 1;
 					}
 				}
 			} else if(e.getKeyChar() == '2'){
 				if(!inEditor) {
 					inventorySlot = 2;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 2;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1574,13 +1690,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 2;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 2;
 					}
 				}
 			} else if(e.getKeyChar() == '3'){
 				if(!inEditor) {
 					inventorySlot = 3;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 3;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1588,13 +1707,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 3;
+					}  else if(keySelected) {
+						keyReady = true;
+						keyChosen = 3;
 					}
 				}
 			} else if(e.getKeyChar() == '4'){
 				if(!inEditor) {
 					inventorySlot = 4;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 4;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1602,13 +1724,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 4;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 4;
 					}
 				}
 			} else if(e.getKeyChar() == '5'){
 				if(!inEditor) {
 					inventorySlot = 5;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 5;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1616,13 +1741,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 5;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 5;
 					}
 				}
 			} else if(e.getKeyChar() == '6'){
 				if(!inEditor) {
 					inventorySlot = 6;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 6;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1630,13 +1758,16 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 6;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 1;
 					}
 				}
 			} else if(e.getKeyChar() == '7'){
 				if(!inEditor) {
 					inventorySlot = 7;
 				} else {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 7;
 					} else if(chestSelected){
 						chestReady = true;
@@ -1644,20 +1775,24 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 7;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 1;
 					}
 				}
 			} else if(e.getKeyChar() == '8') { 
 				if(inEditor) {
-					if(!chestSelected && !shooterSelected) {
+					if(!chestSelected && !shooterSelected && !keySelected) {
 						editorSlot = 8;
 					} else if(chestSelected){
 						chestReady = true;
 						chestChosen = 8;
-						System.out.println("NONONONONo");
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 8;
-						System.out.println("YASSS");
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 8;
 					}
 				}
 			} else if(e.getKeyChar() == '9') {
@@ -1668,6 +1803,9 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 9;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 9;
 					}
 				}
 			} else if(e.getKeyChar() == '0') {
@@ -1678,6 +1816,9 @@ public class GameFrame extends JPanel{
 					} else if(shooterSelected) {
 						shooterReady = true;
 						shooterChosen = 10;
+					} else if(keySelected) {
+						keyReady = true;
+						keyChosen = 10;
 					}
 				}
 			} else if(e.getKeyChar() == 'm'){
@@ -1757,26 +1898,36 @@ public class GameFrame extends JPanel{
 				boolean ba = false;
 				boolean locked = false;
 				for(Chest chest: chests) {
-					locked = false;
-					for(Key key: keys) {
-						if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
-							if(key.getUnlocks() == chest.getID() && inventory[3][inventorySlot - 1] == key.getID()) {
-								hasKey = true;
-							}
-							if(chest.getLocked()) {
-								locked = true;
-							}
-								if(chest.open(hasKey) == 1 || !locked) {
-									if(locked) {
-										inventory[3][inventorySlot - 1] = 0;
-									}
-									ba = true;
-									break;
+					if(!inEditor) {
+						locked = false;
+						for(Key key: keys) {
+							if(itemLayer[realPos2][realPos1] == chest.getID() && !drawInventory) {
+								if(key.getUnlocks() == chest.getID() && inventory[3][inventorySlot - 1] == key.getID()) {
+									hasKey = true;
 								}
+								if(chest.getLocked()) {
+									locked = true;
+								}
+									if(chest.open(hasKey) == 1 || !locked) {
+										if(locked) {
+											inventory[3][inventorySlot - 1] = 0;
+										}
+										ba = true;
+										break;
+									}
+							}
 						}
-					}
-					if(ba) {
-						break;
+						if(ba) {
+							break;
+						}
+					} else {
+						if(itemLayer[mapSelect[1]][mapSelect[0]] == chest.getID()) {
+							if(!displayChestEditorGUI) {
+								displayChestEditorGUI = true;
+							} else {
+								displayChestEditorGUI = false;
+							}
+						}
 					}
 				}
 			} else if(e.getKeyChar() == ' ') {

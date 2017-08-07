@@ -1,5 +1,7 @@
 import java.awt.Image;
 
+import javax.swing.ImageIcon;
+
 public class Shooter {
 	int ID;
 	int orientation = 0;
@@ -12,11 +14,21 @@ public class Shooter {
 	int passiveWait = 0;
 	int HP = 5;
 	boolean Dead = false;
+	Image image1;
+	Image image2;
+	Image image3;
+	Image image4;
 	Image image;
 	public void updateHP() {
 		if(HP <= 0) {
 			Dead = true;
 		}
+	}
+	public void setImages(String s1, String s2, String s3, String s4) {
+		image1 = new ImageIcon(s1).getImage();
+		image2 = new ImageIcon(s2).getImage();
+		image3 = new ImageIcon(s3).getImage();
+		image4 = new ImageIcon(s4).getImage();
 	}
 	public boolean getDead() {
 		return this.Dead;
@@ -61,6 +73,20 @@ public class Shooter {
 		orientation = o;
 	}
 	public Image getImage(){
+		switch(orientation) {
+			case 1:
+				image = image1;
+				break;
+			case 2:
+				image = image2;
+				break;
+			case 3:
+				image = image3;
+				break;
+			case 4:
+				image = image4;
+				break;
+		}
 		return image;
 	}
 	public int getX(){

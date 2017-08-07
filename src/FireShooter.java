@@ -1,11 +1,10 @@
-import javax.swing.ImageIcon;
 
 public class FireShooter extends Shooter{
 
 	public FireShooter(int o, int x1, int y1, int id) {
 		super.setID(id);
 		super.setDetectionRange(5);
-		super.setWaitTime(25);
+		super.setWaitTime(10);
 		setOrientation(o);
 		realX = x1;
 		realY = y1;
@@ -26,7 +25,7 @@ public class FireShooter extends Shooter{
 			break;
 		}
 		*/
-		image = new ImageIcon("src/Assets/FirePeashooter.png").getImage();
+		super.setImages("src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png", "src/Assets/FirePeashooter.png");
 	}
 	@Override
 	public int shoot(int realPos1, int realPos2){

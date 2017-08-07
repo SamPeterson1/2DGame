@@ -67,4 +67,10 @@ public class Enemy {
 	public int getY(){
 		return 0;
 	}
+	public void setX(int x) {
+		this.AILoc1 = x;
+	}
+	public void setY(int y) {
+		this.AILoc2 = y;
+	}
 }
